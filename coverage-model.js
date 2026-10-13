@@ -40,3 +40,49 @@ export function diagnoseCoverage({pipeline,goal,winRate,onTimeRate,averageDeal,a
   ]
  };
 }
+
+
+/**
+ * Benötigte Pipeline Coverage: Abhängigkeit von historischen, vergleichbaren Quoten.
+ *
+ * Methode "split":     P(rechtzeitiger Gewinn) = P(Gewinn) × P(rechtzeitig | Gewinn)
+ * Methode "yield":     Historisch gemessener In-Period Pipeline Yield (Startkohorte).
+ *
+ * P(rechtzeitig | Gewinn) ist BEDINGT auf einen Gewinn, keine eigenständige
+ * allgemeine Wahrscheinlichkeit. Werte sind wertbasiert und kohortenkompatibel.
+ *
+ * Das Ergebnis ist ein vereinfachter Erwartungswert ohne Risikoaufschlag.
+ */
+export function calculateRequiredCoverage({
+  pipeline, goal, method = 'split',
+  winRate, onTimeRate, inPeriodYield
+}) {
+  if (![pipeline,goal].every(Number.isFinite)||pipeline<0||goal<0||
+      !['split','yield'].includes(method)) return {error:'invalid'};
+  let effectiveRate;
+  if (method === 'split') {
+    if (![winRate,onTimeRate].every(Number.isFinite)||
+        winRate<0||winRate>100||onTimeRate<0||onTimeRate>100) return {error:'invalid'};
+    effectiveRate = (winRate/100) * (onTimeRate/100);
+  } else {
+    if (!Number.isFinite(inPeriodYield)||inPeriodYield<0||inPeriodYield>100) return {error:'invalid'};
+    effectiveRate = inPeriodYield/100;
+  }
+  if (goal === 0) return {
+    error:'target-reached', effectiveRatePercent:effectiveRate*100,
+    currentCoverage:null, requiredCoverage:null, requiredPipeline:0,
+    additionalPipeline:0, expectedBookings:pipeline*effectiveRate
+  };
+  const requiredCoverage = effectiveRate>0?1/effectiveRate:null;
+  const requiredPipeline = effectiveRate>0?goal/effectiveRate:null;
+  return {
+    error:effectiveRate===0?'zero-yield':null,
+    effectiveRatePercent:effectiveRate*100,
+    currentCoverage:pipeline/goal,
+    requiredCoverage,
+    requiredPipeline,
+    additionalPipeline:requiredPipeline===null?null:Math.max(0,requiredPipeline-pipeline),
+    expectedBookings:pipeline*effectiveRate,
+    expectedGap:Math.max(0,goal-pipeline*effectiveRate)
+  };
+}

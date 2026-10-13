@@ -192,7 +192,8 @@ function showToast(message){
  clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('visible'),2500);
 }
 function coverage(){
- const p=Number($('#coverage-pipeline').value),t=Number($('#coverage-target').value);
+ const n1=$('#coverage-pipeline').value,n2=$('#coverage-target').value;
+ const p=n1.trim()===''?NaN:Number(n1),t=n2.trim()===''?NaN:Number(n2);
  const value=$('#coverage-value'),bar=$('#coverage-fill'),out=$('#coverage-explain');
  if(!Number.isFinite(p)||!Number.isFinite(t)||p<0||t<0){
   value.textContent='—';bar.style.width='0%';out.textContent='Bitte gültige, nichtnegative Zahlen eingeben.';return;
@@ -254,9 +255,13 @@ function renderCoverageStress(){
 }
 
 function reverse(){
- const target=Number($('#reverse-target').value),win=Number($('#reverse-win').value),deal=Number($('#reverse-deal').value);
- const valid=Number.isFinite(target)&&target>=0&&win>0&&win<=100&&deal>0;
- const values=valid?[nf0(target)+' €',nf(100/win,1)+'×',nf0(target*100/win)+' €',nf0(Math.ceil(target*100/win/deal))]:['—','—','—','—'];
+ const ids=['reverse-target','reverse-win','reverse-ontime','reverse-deal'];
+ const nums=ids.map(id=>$('#'+id).value.trim()===''?NaN:Number($('#'+id).value));
+ const [target,win,ontime,deal]=nums;
+ const valid=nums.every(Number.isFinite)&&target>=0&&win>0&&win<=100&&ontime>0&&ontime<=100&&deal>0;
+ const p=valid?win/100*ontime/100:null;
+ const needed=p===null?null:target/p;
+ const values=valid?[nf0(target)+' €',nf(1/p,1)+'×',nf0(needed)+' €',nf0(Math.ceil(needed/deal))]:['—','—','—','—'];
  ['target','factor','pipeline','deals'].forEach((k,i)=>$('#reverse-out-'+k).textContent=values[i]);
 }
 function renderSources(){

@@ -18,6 +18,7 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           node --check kpis.js
+          node --check kpi-guidance.js
           node --check app.js
           node --check coverage-model.js
           node --check glossary.js

@@ -613,3 +613,60 @@ body.dark .sidebar .side-link .ms-icon{color:#a0d4b5}
 
 .mobile-section-nav a.is-current{background:#e0f1d8;border-color:#9dc896;color:#174b37;font-weight:850}
 body.dark .mobile-section-nav a.is-current{background:#c7e9ae;border-color:#c7e9ae;color:#193d2c}
+
+
+/* KPI-Praxisinterpretation: eindeutige Bewertung ohne erfundene universelle Ampeln. */
+.guidance-panel{
+ margin:20px 0 22px;padding:22px;border:1px solid var(--border,#dce6e1);
+ border-radius:15px;background:var(--surface-soft,#f6f8f6);color:var(--ink);
+}
+.guidance-header{display:flex;align-items:center;justify-content:space-between;gap:12px 20px;flex-wrap:wrap;margin-bottom:13px}
+.guidance-header h4{font-size:20px;font-weight:790;line-height:1.24;letter-spacing:-.025em;margin:3px 0 0}
+.guidance-evidence{font-size:11px;font-weight:770;line-height:1.3;padding:6px 11px;border:1px solid #b9d5c8;border-radius:100px;color:#205c49;background:#eef7f0}
+.guidance-reference{font-size:13px;line-height:1.62;margin:0 0 14px;color:var(--ink)}
+.guidance-reference strong{font-weight:820}
+.guidance-scale{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.guidance-indicator{background:var(--surface,#fff);border:1px solid var(--border,#dce6e1);border-radius:11px;padding:14px 13px 15px;min-width:0}
+.guidance-indicator-title{font-size:12px;font-weight:840;line-height:1.4;display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.guidance-indicator-title:before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block;flex:none}
+.guidance-indicator.good .guidance-indicator-title{color:#23654e}
+.guidance-indicator.watch .guidance-indicator-title{color:#8b611c}
+.guidance-indicator.critical .guidance-indicator-title{color:#a13938}
+.guidance-indicator p{font-size:12.5px;line-height:1.55;margin:0;color:var(--ink)}
+.guidance-reason-grid{margin-top:12px;padding-top:15px;border-top:1px solid var(--border,#dce6e1);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:21px}
+.guidance-reason-grid p{margin:6px 0 0;font-size:12.5px;line-height:1.62}
+.guidance-result{display:flex;flex-direction:column;gap:4px;background:var(--surface,#fff);border:1px solid #abc4bb;border-left:4px solid #466d5e;padding:12px 14px;border-radius:10px;margin:0 0 14px}
+.guidance-result[hidden]{display:none!important}
+.guidance-result.is-good{border-left-color:#297250}
+.guidance-result.is-watch{border-left-color:#a2752f}
+.guidance-result.is-critical{border-left-color:#a53d38}
+.guidance-result.is-neutral{border-left-color:#4d7388}
+.guidance-result-label{font-size:13px;font-weight:850}
+.guidance-result-detail{font-size:12.5px;line-height:1.55}
+.guidance-reference-source{margin:13px 0 0}
+.guidance-citation{font-size:11.5px;font-weight:760;color:#1c6753;text-underline-offset:3px;overflow-wrap:anywhere}
+.guidance-disclaimer{font-size:11.5px;color:#48616c;margin:12px 0 0;line-height:1.55}
+body.dark .guidance-panel{background:#203846;border-color:#49656b;color:#eff9f3}
+body.dark .guidance-indicator,body.dark .guidance-result{background:#19313f;border-color:#4c6870;color:#f0f7f4}
+body.dark .guidance-evidence{background:#254637;border-color:#699276;color:#d3f1cf}
+body.dark .guidance-reference,body.dark .guidance-reason-grid p,body.dark .guidance-indicator p{color:#e3eeea}
+body.dark .guidance-indicator.good .guidance-indicator-title{color:#bce6c8}
+body.dark .guidance-indicator.watch .guidance-indicator-title{color:#f3d5a3}
+body.dark .guidance-indicator.critical .guidance-indicator-title{color:#f2c3b7}
+body.dark .guidance-citation{color:#b8e4c8}
+body.dark .guidance-disclaimer{color:#c2dcd5}
+body.dark .guidance-result.is-good{border-left-color:#a0d8ad}
+body.dark .guidance-result.is-watch{border-left-color:#e4c181}
+body.dark .guidance-result.is-critical{border-left-color:#efaa9b}
+@media(max-width:1100px){.guidance-scale{grid-template-columns:1fr}}
+@media(max-width:760px){
+ .guidance-panel{padding:15px;margin:14px 0 20px}
+ .guidance-header h4{font-size:18px}
+ .guidance-reason-grid{grid-template-columns:1fr;gap:12px}
+ .guidance-indicator{padding:12px}
+}
+@media print{
+ .guidance-panel{break-inside:avoid}
+ .guidance-scale{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .guidance-panel,.guidance-indicator{background:#fff!important;color:#000!important}
+}

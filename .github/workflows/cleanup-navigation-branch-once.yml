@@ -1,0 +1,31 @@
+name: Remove merged navigation branch
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/cleanup-navigation-branch-once.yml
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    if: github.repository == 'thomasasen/saleskpis'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Delete navigation branch if PR 5 merged and branch unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch='feat/return-navigation-20261013'
+          expected='e4ee03597708a7e3c27dc81c4e90476b2d74ebbd'
+          merged="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/5" --jq '.merged_at')"
+          test -n "$merged" && test "$merged" != 'null'
+          head="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${branch}" --jq '.object.sha')"
+          if [[ "$head" != "$expected" ]]; then
+            echo "::error::Branch moved; skipping deletion"
+            exit 1
+          fi
+          gh api --silent -X DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/${branch}"
+          gh api "repos/${GITHUB_REPOSITORY}/branches?per_page=100" --jq '.[].name'

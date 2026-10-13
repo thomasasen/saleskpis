@@ -2,6 +2,7 @@ import {dependencies} from './dependencies.js';
 import {glossary,glossaryById} from './glossary.js';
 import {diagnoseCoverage,calculateRequiredCoverage} from './coverage-model.js';
 import {categories,kpis,kpiById,sources,evaluate} from './kpis.js';
+import {kpiGuidance,guidanceEvidence,assessKpiValue} from './kpi-guidance.js';
 
 const $=selector=>document.querySelector(selector);
 const materialIcon=name=>'<svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#'+name+'"></use></svg>';
@@ -235,6 +236,41 @@ function dependencyExplanation(k){
  ).join('')+'</div>';
 }
 
+
+function guidanceMarkup(k){
+ const g=kpiGuidance[k.id];if(!g)return '';
+ const e=guidanceEvidence[k.id]||{type:'Individueller Ziel-/Trendvergleich'};
+ const source=e.source&&sources[e.source];
+ const sourceLink=source?'<a href="'+escapeHtml(source.url)+'" target="_blank" rel="noopener noreferrer" class="guidance-citation">Nachweis: '+escapeHtml(source.name)+' ↗</a>':'';
+ const title=k.title;
+ return '<section class="guidance-panel" aria-label="Praxisbewertung für '+escapeHtml(title)+'">'+
+  '<header class="guidance-header"><div><span class="detail-label">ENTSCHEIDUNGSHILFE</span>'+
+  '<h4>Ist dieser Wert gut oder kritisch?</h4></div>'+
+  '<span class="guidance-evidence">'+escapeHtml(e.type)+'</span></header>'+
+  '<p class="guidance-reference"><strong>Bekannter Richtwert / Vergleich:</strong> '+escapeHtml(k.benchmark)+'</p>'+
+  '<div class="guidance-result" hidden role="status" aria-live="polite"><span class="guidance-result-label"></span><span class="guidance-result-detail"></span></div>'+
+  '<div class="guidance-scale" role="list">'+
+   '<div class="guidance-indicator good" role="listitem"><span class="guidance-indicator-title">Gutes Signal</span><p>'+escapeHtml(g.good)+'</p></div>'+
+   '<div class="guidance-indicator watch" role="listitem"><span class="guidance-indicator-title">Beobachten</span><p>'+escapeHtml(g.warning)+'</p></div>'+
+   '<div class="guidance-indicator critical" role="listitem"><span class="guidance-indicator-title">Kritisch / alarmierend</span><p>'+escapeHtml(g.critical)+'</p></div>'+
+  '</div>'+
+  '<div class="guidance-reason-grid"><div><span class="detail-label">WARUM DAS WICHTIG IST</span><p>'+escapeHtml(g.why)+'</p></div>'+
+  '<div><span class="detail-label">KONKRETER NÄCHSTER SCHRITT</span><p>'+escapeHtml(g.next)+'</p></div></div>'+
+  (sourceLink?'<p class="guidance-reference-source">'+sourceLink+'</p>':'')+
+  '<p class="guidance-disclaimer">Fachliche Einordnung statt automatisch belegter Unternehmensdiagnose. Segment, Definition, Zeitraum und Vergleichskohorte müssen passen.</p>'+
+  '</section>';
+}
+function updateGuidanceResult(article,k,value){
+ const panel=article.querySelector('.guidance-result');
+ if(!panel)return;
+ const message=assessKpiValue(k.id,value);
+ panel.hidden=!message;
+ if(!message)return;
+ panel.className='guidance-result is-'+message.level;
+ panel.querySelector('.guidance-result-label').textContent='Dein Rechenwert: '+message.label;
+ panel.querySelector('.guidance-result-detail').textContent=message.detail;
+}
+
 function cardMarkup(k){
  const inputs=k.fields.map((f,i)=>{
   const id='input-'+k.id+'-'+i;
@@ -254,7 +290,7 @@ function cardMarkup(k){
   '<section class="calc-wrap" aria-label="KPI-Rechner '+escapeHtml(k.title)+'"><div class="calc-title"><strong>Mit eigenen Zahlen rechnen</strong><button class="calc-reset" type="button">Beispielwerte ↺</button></div>'+
   '<div class="calc-fields">'+inputs+'</div><div class="calc-result"><span>BERECHNETER WERT</span><output aria-live="polite">'+escapeHtml(formatValue(evaluate(k,k.fields.map(f=>f.value)),k.unit))+'</output></div>'+
   '<p class="calc-error" aria-live="polite"></p></section>'+
-  dependencyExplanation(k)+'<div class="detail-block"><span class="detail-label">So liest du das Ergebnis</span><p>'+escapeHtml(k.reading)+'</p></div>'+
+  guidanceMarkup(k)+dependencyExplanation(k)+'<div class="detail-block"><span class="detail-label">So liest du das Ergebnis</span><p>'+escapeHtml(k.reading)+'</p></div>'+
   '<div class="detail-block decision"><span class="detail-label">Was du daraus ableiten solltest</span><p>'+escapeHtml(k.action)+'</p></div>'+
   '<div class="detail-block warning"><span class="detail-label">Typischer Fehler / wichtige Abgrenzung</span><p>'+escapeHtml(k.watch)+'</p></div>'+
   (related?'<div class="detail-block"><span class="detail-label">Zusammenhängende KPIs</span><div class="related-links">'+related+'</div></div>':'')+
@@ -277,6 +313,7 @@ function updateCardResult(article){
  const raw=[...article.querySelectorAll('.calc-input')].map(n=>n.value.trim()===''?NaN:Number(n.value));
  const result=evaluate(k,raw);
  article.querySelector('output').textContent=formatValue(result,k.unit);
+ updateGuidanceResult(article,k,result);
  const error=article.querySelector('.calc-error');
  if(result===null)error.textContent='Bitte gültige Zahlen eingeben. Negative Werte sind nur bei der Rule of 40 erlaubt. Prozentangaben müssen gültig sein; Verluste dürfen die ursprüngliche Kohorte nicht überschreiten.';
  else if(k.id==='grr'&&(result>100||result<0))error.textContent='Plausibilitätswarnung: GRR muss zwischen 0 und 100 % liegen. Churn-/Contraction-Werte prüfen.';

@@ -41,7 +41,7 @@ jobs:
         with:
           node-version: "22"
       - name: Install browser test dependency (not shipped to GitHub Pages)
-        run: npm install --no-save --ignore-scripts playwright@1.55.1
+        run: npm install --no-save --ignore-scripts playwright@1.55.1 @axe-core/playwright@4.10.2
       - name: Install Chromium for Playwright
         run: npx playwright install --with-deps chromium
       - name: Start local website

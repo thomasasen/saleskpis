@@ -240,3 +240,11 @@ body.dark .mobile-section-nav a:hover,body.dark .mobile-section-nav a:focus-visi
  .topbar-actions .icon-button{flex:none}
  .topbar{gap:4px}
 }
+
+
+/* axe-core WCAG 2.1 AA: Kontrast der Seitennavigation und visuell erkennbare Footer-Links */
+.brand small{color:#556775}
+.category-numeral{color:#4e6370}
+.footer a{text-decoration:underline;text-underline-offset:3px}
+body.dark .brand small,body.dark .category-numeral{color:#c0d3d7}
+body.dark .footer a{color:#d0e9d8}

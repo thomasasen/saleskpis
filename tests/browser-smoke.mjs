@@ -206,6 +206,9 @@ try{
    assert.ok(await page.locator('#map-detail-links [data-jump="forecast-error"]').isVisible());
    const rect=await node.boundingBox();
    assert.ok(rect.height>=44&&rect.width>=44,'Diagramm-Station muss Touch-Ziel bieten');
+   assert.equal(await page.locator('#map-change-station').isVisible(),true);
+   await page.locator('#map-change-station').click();
+   assert.equal(await page.locator('[data-map-node="forecast"]').evaluate(el=>document.activeElement===el),true);
   });
   await run('Mobiler Navigationslink zur Bibliothek bei '+width+' px',async()=>{
    await page.locator('.mobile-section-nav a[href="#bibliothek"]').click();

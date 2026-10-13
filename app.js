@@ -1,3 +1,4 @@
+import {dependencies} from './dependencies.js';
 import {glossary,glossaryById} from './glossary.js';
 import {diagnoseCoverage} from './coverage-model.js';
 import {categories,kpis,kpiById,sources,evaluate} from './kpis.js';
@@ -120,6 +121,17 @@ function jumpToGlossary(id){
  entry.querySelector('summary').focus({preventScroll:true});
 }
 
+
+function dependencyExplanation(k){
+ const links=dependencies[k.id];
+ if(!links?.length)return '';
+ return '<div class="dependency-info"><span class="detail-label">Wovon hängt die Kennzahl ab?</span><p>Jede Verbindung ist einzeln erklärt. „Indirekt“ bedeutet: Die Größe ändert nicht zwangsläufig die Rechenformel.</p>'+
+ links.map(rel=>
+  '<div class="dependency-row"><span class="dependency-kind">'+escapeHtml(rel.kind)+'</span><div><button type="button" data-jump="'+escapeHtml(rel.relatedId)+'">'+escapeHtml(rel.label)+' ↗</button>'+
+  '<p>'+escapeHtml(rel.explanation)+'</p></div></div>'
+ ).join('')+'</div>';
+}
+
 function cardMarkup(k){
  const inputs=k.fields.map((f,i)=>{
   const id='input-'+k.id+'-'+i;
@@ -139,7 +151,7 @@ function cardMarkup(k){
   '<section class="calc-wrap" aria-label="KPI-Rechner '+escapeHtml(k.title)+'"><div class="calc-title"><strong>Mit eigenen Zahlen rechnen</strong><button class="calc-reset" type="button">Beispielwerte ↺</button></div>'+
   '<div class="calc-fields">'+inputs+'</div><div class="calc-result"><span>BERECHNETER WERT</span><output aria-live="polite">'+escapeHtml(formatValue(evaluate(k,k.fields.map(f=>f.value)),k.unit))+'</output></div>'+
   '<p class="calc-error" aria-live="polite"></p></section>'+
-  '<div class="detail-block"><span class="detail-label">So liest du das Ergebnis</span><p>'+escapeHtml(k.reading)+'</p></div>'+
+  dependencyExplanation(k)+'<div class="detail-block"><span class="detail-label">So liest du das Ergebnis</span><p>'+escapeHtml(k.reading)+'</p></div>'+
   '<div class="detail-block decision"><span class="detail-label">Was du daraus ableiten solltest</span><p>'+escapeHtml(k.action)+'</p></div>'+
   '<div class="detail-block warning"><span class="detail-label">Typischer Fehler / wichtige Abgrenzung</span><p>'+escapeHtml(k.watch)+'</p></div>'+
   (related?'<div class="detail-block"><span class="detail-label">Zusammenhängende KPIs</span><div class="related-links">'+related+'</div></div>':'')+
@@ -283,7 +295,7 @@ function init(){
  $('#mail-link').href='mailto:?subject='+encodeURIComponent('Sales KPI Atlas – Vertriebskennzahlen verstehen')+'&body='+encodeURIComponent('Ein praxisnahes Nachschlagewerk mit KPI-Rechnern:\n'+location.origin+location.pathname);
  els.filters.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b)selectFilter(b.dataset.filter,false)});
  els.nav.addEventListener('click',e=>{const a=e.target.closest('[data-filter]');if(a){e.preventDefault();selectFilter(a.dataset.filter,true)}});
- els.search.addEventListener('input',e=>{state.query=e.target.value;renderGrid()});
+ els.search.addEventListener('input',e=>{state.query=e.target.value;if(state.query)state.category='all';renderGrid()});
  $('#reset-filters').addEventListener('click',()=>selectFilter('featured',false));
  $('#empty-reset').addEventListener('click',()=>selectFilter('all',false));
  els.grid.addEventListener('click',e=>{

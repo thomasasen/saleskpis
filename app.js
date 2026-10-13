@@ -506,6 +506,7 @@ function initTheme(){
  $('#theme-toggle').setAttribute('aria-pressed',String(document.body.classList.contains('dark')));
 }
 function init(){
+ try{history.scrollRestoration='manual'}catch{}
  $('#hero-kpi-count').textContent=kpis.length;
  renderNav();renderGrid();renderSources();renderGlossary();initTheme();coverage();renderRequiredCoverage();reverse();renderCoverageStress();
  // Linkziel beim Teilen immer aus der tatsächlich geöffneten Seite ableiten.

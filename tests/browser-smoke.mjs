@@ -1,0 +1,94 @@
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright';
+
+const base='http://127.0.0.1:8765';
+const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+const failures=[];
+const run=async(name,fn)=>{
+ try{await fn();console.log('PASS',name)}
+ catch(e){failures.push(name+': '+e.message);console.error('FAIL',name,e.message)}
+};
+const attachErrors=page=>{
+ const errors=[];
+ page.on('pageerror',error=>errors.push(String(error)));
+ return errors;
+};
+try{
+ const desktop=await browser.newPage({viewport:{width:1440,height:900}});
+ const jsErrors=attachErrors(desktop);
+ await desktop.goto(base,{waitUntil:'networkidle'});
+ await run('Startseite und JavaScript-Initialisierung',async()=>{
+  assert.equal((await desktop.locator('#hero-kpi-count').innerText()).trim(),'67');
+  assert.equal((await desktop.locator('#required-coverage-value').innerText()).trim(),'4,17×');
+  assert.equal(jsErrors.length,0,jsErrors.join('; '));
+ });
+ await run('Live-Änderung bestehende Pipeline propagiert in Bedarfsrechner',async()=>{
+  await desktop.locator('#coverage-pipeline').fill('600000');
+  assert.equal((await desktop.locator('#required-current-value').innerText()).trim(),'4,00×');
+  assert.equal((await desktop.locator('#required-gap-value').innerText()).trim(),'25.000 €');
+ });
+ await run('Win Rate und Fristquote ändern benötigte Coverage',async()=>{
+  await desktop.locator('#required-win-rate').fill('25');
+  await desktop.locator('#required-on-time').fill('100');
+  assert.equal((await desktop.locator('#required-coverage-value').innerText()).trim(),'4,00×');
+  assert.equal((await desktop.locator('#required-gap-value').innerText()).trim(),'0 €');
+ });
+ await run('Alternativmethode historischer Yield ist verwendbar',async()=>{
+  await desktop.locator('input[name="required-method"][value="yield"]').check();
+  assert.equal(await desktop.locator('#required-split-fields').isVisible(),false);
+  assert.equal(await desktop.locator('#required-yield-fields').isVisible(),true);
+  await desktop.locator('#required-yield').fill('20');
+  assert.equal((await desktop.locator('#required-coverage-value').innerText()).trim(),'5,00×');
+  assert.equal((await desktop.locator('#required-gap-value').innerText()).trim(),'150.000 €');
+ });
+ await run('Eingabe 0 wird korrekt als nicht berechenbar markiert',async()=>{
+  await desktop.locator('#required-yield').fill('0');
+  assert.equal((await desktop.locator('#required-coverage-value').innerText()).trim(),'—');
+  assert.match(await desktop.locator('#required-status').innerText(),/kein endlicher Pipelinewert/);
+ });
+ await run('KPI-Suche findet spezifische Kennzahl und Rechner',async()=>{
+  const field=desktop.locator('#kpi-search');
+  await field.fill('CAC Payback Period');
+  assert.ok((await desktop.locator('.kpi-card').count())>=1);
+  const card=desktop.locator('.kpi-card').filter({hasText:'CAC Payback Period'}).first();
+  await card.locator('.kpi-expand').click();
+  assert.equal(await card.locator('.calc-wrap').isVisible(),true);
+  await card.locator('.calc-input').first().fill('300000');
+  assert.match(await card.locator('output').innerText(),/Monate/);
+ });
+ await run('Glossar erklärt Sales Cycle und verlinkt KPI',async()=>{
+  await desktop.locator('#glossary-search').fill('Sales Cycle');
+  const glossary=desktop.locator('.glossary-item').filter({hasText:'Sales Cycle'}).first();
+  assert.ok(await glossary.count());
+  await glossary.locator('summary').click();
+  assert.match(await glossary.locator('.glossary-body').innerText(),/Vertriebsstart|Vertriebszyklus|Abschluss/);
+ });
+ await run('Link öffnet KPI und fokussiert Detailbutton',async()=>{
+  await desktop.goto(base+'/#kpi-pipeline-coverage',{waitUntil:'networkidle'});
+  const card=desktop.locator('#kpi-pipeline-coverage');
+  assert.equal(await card.locator('.kpi-detail').isVisible(),true);
+  assert.equal(await card.locator('.kpi-expand').getAttribute('aria-expanded'),'true');
+ });
+ await desktop.close();
+
+ for(const width of [1024,768,390,320]){
+  const page=await browser.newPage({viewport:{width,height:800},isMobile:false});
+  const errs=attachErrors(page);
+  await page.goto(base,{waitUntil:'networkidle'});
+  await run('Mobilnavigation und Layout bei '+width+' px',async()=>{
+   assert.equal(await page.locator('.mobile-section-nav').isVisible(),true);
+   const scrollWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
+   assert.ok(scrollWidth<=width+2,'Horizontales Überlaufen: '+scrollWidth+' > '+width);
+   assert.equal(errs.length,0,errs.join('; '));
+  });
+  await run('Mobiler Navigationslink zur Bibliothek bei '+width+' px',async()=>{
+   await page.locator('.mobile-section-nav a[href="#bibliothek"]').click();
+   assert.equal(new URL(page.url()).hash,'#bibliothek');
+  });
+  await page.close();
+ }
+}finally{
+ await browser.close();
+}
+if(failures.length)throw new Error(failures.length+' Browser-Checks fehlgeschlagen:\n'+failures.join('\n'));
+console.log('Alle Browserchecks erfolgreich.');

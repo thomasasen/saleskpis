@@ -600,3 +600,12 @@ body.dark .sidebar .side-link .ms-icon{color:#a0d4b5}
 @media(max-width:350px){
  .kpi-map .map-node:nth-of-type(n){grid-column:auto;grid-row:auto}
 }
+
+
+.map-change-station{display:none}
+@media(max-width:760px){
+ .map-detail{display:flex;flex-direction:column}
+ .map-change-station{display:inline-flex;align-items:center;justify-content:flex-start;gap:7px;align-self:flex-start;min-height:44px;margin:0 0 -4px;border:0;background:transparent;color:#205f49;font-size:12px;font-weight:800;padding:8px 2px}
+ .map-change-station .ms-icon{height:18px;width:18px}
+ body.dark .map-change-station{color:#c2eabb}
+}

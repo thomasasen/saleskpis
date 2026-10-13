@@ -436,7 +436,8 @@ function init(){
  handleHashNavigation();
 }
 function handleHashNavigation(){
- const anchor=decodeURIComponent(location.hash.replace(/^#/,''));
+ let anchor;
+ try{anchor=decodeURIComponent(location.hash.replace(/^#/,''))}catch{return;}
  if(anchor.startsWith('kpi-')&&kpiById[anchor.slice(4)]){
   jumpToKpi(anchor.slice(4));
  }else if(anchor.startsWith('begriff-')&&glossaryById[anchor.slice(8)]){

@@ -8,7 +8,7 @@ const els={
  filters:$('#category-filters'),nav:$('#category-nav'),grid:$('#kpi-grid'),
  search:$('#kpi-search'),count:$('#result-count'),empty:$('#empty-state'),toast:$('#toast')
 };
-const featured=['pipeline-coverage','required-coverage','pipeline-gap','win-rate','win-rate-value','sales-velocity','forecast-error','quota-attainment','arr','nrr','grr','cac-payback','utilization','project-margin'];
+const featured=['pipeline-coverage','required-coverage','in-period-yield','pipeline-gap','win-rate','win-rate-value','sales-velocity','forecast-error','quota-attainment','arr','nrr','grr','cac-payback','utilization','project-margin'];
 const state={category:'featured',query:''};
 const nf=(n,digits=1)=>new Intl.NumberFormat('de-DE',{minimumFractionDigits:digits,maximumFractionDigits:digits}).format(n);
 const nf0=n=>new Intl.NumberFormat('de-DE',{maximumFractionDigits:0}).format(n);
@@ -65,6 +65,7 @@ function termLinksForKpi(k){
  const termRefs={
   'pipeline-coverage':['coverage','pipeline','weighted-rate','sales-cycle','slippage'],
   'required-coverage':['coverage','weighted-rate','win-rate'],
+  'in-period-yield':['in-period-yield','pipeline','slippage','weighted-rate','cohort'],
   'pipeline-gap':['coverage','quota','deal-size'],
   'weighted-pipeline':['pipeline','sales-stage','weighted-rate'],
   'win-rate':['win-rate','loss-rate','closed-won','closed-lost'],

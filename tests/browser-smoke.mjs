@@ -210,6 +210,49 @@ try{
   assert.match(await card.locator('.guidance-evidence').innerText(),/Individueller/);
   assert.match(await card.locator('.guidance-indicator.critical').innerText(),/Dealzahl/);
  });
+ await run('Lesbarkeit: Schriftgrößen für Navigation, KPI, Formulare und Praxisbewertung',async()=>{
+  await desktop.goto(base+'/#kpi-nrr',{waitUntil:'networkidle'});
+  const sample=await desktop.evaluate(()=>{
+   const size=selector=>{
+    const el=document.querySelector(selector);
+    if(!el)throw new Error('Fehlendes Testelement: '+selector);
+    return Number.parseFloat(getComputedStyle(el).fontSize);
+   };
+   return {
+    body:size('body'),nav:size('.sidebar .side-link'),
+    label:size('#kpi-nrr .detail-label'),
+    summary:size('#kpi-nrr .kpi-summary'),
+    benchmark:size('#kpi-nrr .kpi-benchmark'),
+    form:size('#kpi-nrr .calc-input'),
+    guide:size('#kpi-nrr .guidance-indicator p'),
+    guideTitle:size('#kpi-nrr .guidance-indicator-title'),
+    meta:size('#kpi-nrr .guidance-evidence'),
+    map:size('.map-node small')
+   };
+  });
+  assert.ok(sample.body>=16,JSON.stringify(sample));
+  assert.ok(sample.nav>=15,JSON.stringify(sample));
+  assert.ok(sample.label>=14,JSON.stringify(sample));
+  assert.ok(sample.summary>=16,JSON.stringify(sample));
+  assert.ok(sample.benchmark>=15,JSON.stringify(sample));
+  assert.ok(sample.form>=16,JSON.stringify(sample));
+  assert.ok(sample.guide>=16,JSON.stringify(sample));
+  assert.ok(sample.guideTitle>=16,JSON.stringify(sample));
+  assert.ok(sample.meta>=13,JSON.stringify(sample));
+  assert.ok(sample.map>=15,JSON.stringify(sample));
+ });
+ await run('200 Prozent Schriftvergrößerung: Rem-Skala bleibt bedienbar',async()=>{
+  await desktop.goto(base+'/#kpi-nrr',{waitUntil:'networkidle'});
+  const before=await desktop.locator('#kpi-nrr .guidance-indicator p').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize));
+  await desktop.evaluate(()=>{document.documentElement.style.fontSize='200%'});
+  const after=await desktop.locator('#kpi-nrr .guidance-indicator p').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize));
+  assert.ok(after>=before*1.95,'Text zoomed from '+before+' to only '+after+'px');
+  assert.equal(await desktop.locator('#kpi-nrr .kpi-expand').isVisible(),true);
+  assert.equal(await desktop.locator('#kpi-nrr .guidance-panel').isVisible(),true);
+  const width=await desktop.evaluate(()=>({page:document.documentElement.scrollWidth,viewport:innerWidth}));
+  assert.ok(width.page<=width.viewport+2,'200% Schrift horizontaler Überlauf: '+JSON.stringify(width));
+  await desktop.evaluate(()=>{document.documentElement.style.removeProperty('font-size')});
+ });
  await desktop.close();
  await context.close();
 
@@ -236,6 +279,25 @@ try{
    assert.equal(await panel.isVisible(),true);
    const scrollWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
    assert.ok(scrollWidth<=322,'KPI-Praxispanel verursacht horizontales Scrollen: '+scrollWidth);
+  });
+  if(width===390||width===320)await run('Mobile Schriftgrößen '+width+'px',async()=>{
+   const sample=await page.evaluate(()=>{
+    const size=s=>parseFloat(getComputedStyle(document.querySelector(s)).fontSize);
+    return {
+      body:size('body'),
+      nav:size('.mobile-section-nav a'),
+      mapLabel:size('.map-node-top'),
+      mapBody:size('.map-node small'),
+      card:size('.intent-card>strong'),
+      search:size('#kpi-search')
+    };
+   });
+   assert.ok(sample.body>=16,JSON.stringify(sample));
+   assert.ok(sample.nav>=14,JSON.stringify(sample));
+   assert.ok(sample.mapLabel>=13,JSON.stringify(sample));
+   assert.ok(sample.mapBody>=14,JSON.stringify(sample));
+   assert.ok(sample.card>=16,JSON.stringify(sample));
+   assert.ok(sample.search>=16,JSON.stringify(sample));
   });
   if(width===390)await run('WCAG-Kontraste und Semantik auf Mobiltelefon',async()=>{
    const audit=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();

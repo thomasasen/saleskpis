@@ -47,3 +47,15 @@ test('Offizielles Material-Icon-Sprite lokal integriert statt externen Google-Fo
  assert.match(html,/material-icons\.svg#space_dashboard/);
  assert.doesNotMatch(html,/fonts\.googleapis\.com|fonts\.gstatic\.com/);
 });
+
+test('Lesbare rem-Typografie: keine festen Texte unter 14px mehr',()=>{
+ const fixedSizes=[...css.matchAll(/font-size\s*:\s*([0-9.]+)px/g)];
+ const tiny=fixedSizes.filter(m=>Number(m[1])<14);
+ assert.equal(tiny.length,0,'Unlesbare feste Schriftgrößen: '+tiny.map(m=>m[0]).join(', '));
+ for(const token of ['--font-caption:.8125rem','--font-small:.875rem','--font-support:.9375rem','--font-body:1rem']){
+  assert.ok(css.includes(token),'Fehlende Typografiestufe: '+token);
+ }
+ for(const fragment of ['html{font-size:100%','.guidance-indicator p','.calc-fields input','@media(max-width:350px)']){
+  assert.ok(css.includes(fragment),'Typografie-Regel fehlt: '+fragment);
+ }
+});

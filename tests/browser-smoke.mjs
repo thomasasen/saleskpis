@@ -24,7 +24,7 @@ try{
   const serious=audit.violations.filter(v=>v.impact==='serious'||v.impact==='critical');
   if(serious.length)console.log('A11y-Audit',JSON.stringify(serious.map(v=>({
     id:v.id,impact:v.impact,description:v.description,
-    nodes:v.nodes.slice(0,6).map(n=>({target:n.target,summary:n.failureSummary}))
+    nodes:v.nodes.slice(0,100).map(n=>({target:n.target,summary:n.failureSummary}))
   })),null,2));
   assert.equal(serious.length,0,'Es gibt '+serious.length+' kritische/schwere WCAG-Verstöße');
  });
@@ -32,7 +32,7 @@ try{
   await desktop.locator('#theme-toggle').click();
   const audit=await new AxeBuilder({page:desktop}).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();
   const serious=audit.violations.filter(v=>['critical','serious'].includes(v.impact));
-  if(serious.length)console.log('Dark A11y',JSON.stringify(serious.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.slice(0,8).map(n=>({target:n.target,summary:n.failureSummary}))})),null,2));
+  if(serious.length)console.log('Dark A11y',JSON.stringify(serious.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.slice(0,100).map(n=>({target:n.target,summary:n.failureSummary}))})),null,2));
   await desktop.locator('#theme-toggle').click();
   assert.equal(serious.length,0,'Dark Mode: '+serious.length+' schwere A11y-Verstöße');
  });
@@ -112,7 +112,7 @@ try{
   if(width===390)await run('WCAG-Kontraste und Semantik auf Mobiltelefon',async()=>{
    const audit=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();
    const serious=audit.violations.filter(v=>['critical','serious'].includes(v.impact));
-   if(serious.length)console.log('Mobile A11y',JSON.stringify(serious.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.slice(0,8).map(n=>({target:n.target,summary:n.failureSummary}))})),null,2));
+   if(serious.length)console.log('Mobile A11y',JSON.stringify(serious.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.slice(0,100).map(n=>({target:n.target,summary:n.failureSummary}))})),null,2));
    assert.equal(serious.length,0,'Mobil: '+serious.length+' schwere A11y-Verstöße');
   });
   await run('Mobiler Navigationslink zur Bibliothek bei '+width+' px',async()=>{

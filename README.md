@@ -10,6 +10,7 @@
 - **Sichtbarer Rechner direkt unter der Pipeline Coverage: „Welche Coverage brauchen wir?“** Wahlweise aus wertgewichteter Win Rate plus Fristquote oder unmittelbar aus dem historischen In-Period Pipeline Yield. Zeigt benötigten Faktor, erforderliche Pipeline und zusätzlichen Pipelinebedarf, immer auf Basis des dort angegebenen Restziels und der vorhandenen offenen Pipeline.
 - Rückwärtsplanung von Restziel über wertgewichtete Abschlussquote zum benötigten Pipelinewert und zur Opportunity-Anzahl.
 - 67 durchsuchbare KPI-Karten mit eigenen Rechnern und Querverweisen.
+- **Rücksprung nach jedem internen Querverweis:** Sichtbarer Button „Zurück zur vorherigen Stelle“ und nativer Browser-Zurück/Vorwärts-Verlauf. Beim Rückweg werden Suchbegriff, Themenfilter, geöffnete KPI-/Glossareinträge, KPI-Rechnereingaben und Scrollposition wiederhergestellt. Auch Abschnittssprünge und mehrstufige Verweise sind berücksichtigt. Direkt aufgerufene Links zeigen keinen irreführenden Rückbutton.
 - Grafische Wirkungskette Akquise → Pipeline → Abschluss → Wachstum.
 - **Coverage-Stresstest** mit wertgewichteter Win Rate, fristgerechtem Gewinnanteil, Dealgröße, Konzentrationsrisiko und Sales Cycle als Plausibilitätscheck.
 - **41 deutsch erklärte Fachbegriffe** mit Beispielen, Denkfehlern und Links zu passenden Rechnern.

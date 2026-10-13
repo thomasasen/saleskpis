@@ -332,3 +332,28 @@ body.dark .view-hint{color:#d0e2e5}
 .detail-block.warning .detail-label{color:#78521d}
 body.dark .card-term-links>span,body.dark .dependency-kind{color:#c4e3cd}
 body.dark .detail-block.warning .detail-label{color:#f1d5a5}
+
+
+/* Kontextnavigation: internen Querverweis in einem Schritt rückgängig machen. */
+.jump-return{
+ position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));
+ z-index:95;filter:drop-shadow(0 8px 20px rgba(11,30,42,.22));
+}
+.jump-return[hidden]{display:none!important}
+.jump-return button{
+ display:flex;align-items:center;gap:10px;justify-content:center;
+ max-width:min(340px,calc(100vw - 32px));min-height:48px;
+ border:1px solid #294659;border-radius:100px;padding:11px 18px;
+ background:#102c44;color:#fff;font-size:13px;font-weight:780;
+ white-space:normal;text-align:left;line-height:1.3;cursor:pointer;
+}
+.jump-return button:hover{background:#234d5b;border-color:#89b9a0}
+.jump-return button:focus-visible{outline:3px solid #bfe89c;outline-offset:3px}
+.jump-return-arrow{font-size:20px;line-height:1;font-weight:650}
+body.dark .jump-return button{background:#d4edb7;border-color:#d4edb7;color:#1a3a2b}
+body.dark .jump-return button:hover{background:#e9f8da}
+@media(max-width:600px){
+ .jump-return{right:12px;bottom:max(12px,env(safe-area-inset-bottom))}
+ .jump-return button{padding:11px 14px;min-height:48px;font-size:12px}
+}
+@media print{.jump-return{display:none!important}}

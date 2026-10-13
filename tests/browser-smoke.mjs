@@ -96,6 +96,51 @@ try{
   assert.equal(await card.locator('.kpi-detail').isVisible(),true);
   assert.equal(await card.locator('.kpi-expand').getAttribute('aria-expanded'),'true');
  });
+ await run('Sprungreise KPI → Glossar → KPI, UI-Zurück und Browser-Zurück',async()=>{
+  await desktop.goto(base,{waitUntil:'networkidle'});
+  assert.equal(await desktop.locator('#jump-return').isVisible(),false,'Kein Rückbutton auf Startseite');
+  await desktop.locator('#kpi-search').fill('Pipeline Coverage');
+  const original=desktop.locator('#kpi-pipeline-coverage');
+  await original.locator('.kpi-expand').click();
+  await original.locator('.calc-input').first().fill('610000');
+  const sourceLink=original.locator('[data-glossary="sales-cycle"]');
+  await sourceLink.scrollIntoViewIfNeeded();
+  const sourceY=await desktop.evaluate(()=>window.scrollY);
+  await sourceLink.click();
+  await desktop.waitForURL('**/#begriff-sales-cycle');
+  assert.equal(await desktop.locator('#begriff-sales-cycle').getAttribute('open'),'');
+  assert.equal(await desktop.locator('#jump-return').isVisible(),true);
+  await desktop.locator('#begriff-sales-cycle [data-jump="avg-cycle"]').click();
+  await desktop.waitForURL('**/#kpi-avg-cycle');
+  assert.equal(await desktop.locator('#kpi-avg-cycle .kpi-detail').isVisible(),true);
+  await desktop.locator('#jump-return-button').click();
+  await desktop.waitForURL('**/#begriff-sales-cycle');
+  assert.equal(await desktop.locator('#begriff-sales-cycle').getAttribute('open'),'');
+  await desktop.goBack();
+  assert.equal(new URL(desktop.url()).hash,'');
+  assert.equal(await desktop.locator('#kpi-search').inputValue(),'Pipeline Coverage');
+  assert.equal(await desktop.locator('#kpi-pipeline-coverage .kpi-detail').isVisible(),true);
+  assert.equal(await desktop.locator('#kpi-pipeline-coverage .calc-input').first().inputValue(),'610000');
+  await desktop.waitForFunction(y=>Math.abs(window.scrollY-y)<=5,sourceY);
+  assert.equal(await desktop.locator('#jump-return').isVisible(),false);
+  await desktop.goForward();
+  assert.equal(new URL(desktop.url()).hash,'#begriff-sales-cycle');
+  assert.equal(await desktop.locator('#jump-return').isVisible(),true);
+ });
+ await run('Interner Abschnittslink bietet Rücksprung an ursprüngliche Scrollposition',async()=>{
+  await desktop.goto(base,{waitUntil:'networkidle'});
+  await desktop.locator('.mobile-section-nav a[href="#bibliothek"]').evaluate(el=>el.click());
+  await desktop.waitForURL('**/#bibliothek');
+  assert.equal(await desktop.locator('#jump-return').isVisible(),true);
+  await desktop.locator('#jump-return-button').click();
+  await desktop.waitForURL(base+'/');
+  assert.equal(await desktop.locator('#jump-return').isVisible(),false);
+ });
+ await run('Direkt geteilter KPI-Link hat keinen fiktiven internen Rücksprung',async()=>{
+  await desktop.goto(base+'/#kpi-win-rate',{waitUntil:'networkidle'});
+  assert.equal(await desktop.locator('#kpi-win-rate .kpi-detail').isVisible(),true);
+  assert.equal(await desktop.locator('#jump-return').isVisible(),false);
+ });
  await desktop.close();
  await context.close();
 

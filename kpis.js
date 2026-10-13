@@ -100,6 +100,6 @@ export const kpis=[
 ];
 export const kpiById=Object.fromEntries(kpis.map(k=>[k.id,k]));
 export function evaluate(kpi,values){
- if(!Array.isArray(values)||values.length!==kpi.fields.length||values.some(x=>!Number.isFinite(x)||x<0))return null;
+ if(!Array.isArray(values)||values.length!==kpi.fields.length||values.some(x=>!Number.isFinite(x)||(kpi.id!=='rule-40'&&x<0)))return null;
  try {const result=kpi.compute(values);return Number.isFinite(result)?result:null;}catch{return null;}
 }

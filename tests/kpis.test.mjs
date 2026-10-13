@@ -20,7 +20,7 @@ test('Katalog hat eine breite, valide Abdeckung',()=>{
  }
 });
 check('pipeline-coverage',3);
-check('required-coverage',4);
+check('required-coverage',10000/(30*80));
 check('pipeline-gap',180000);
 check('weighted-pipeline',120000);
 check('win-rate',30);

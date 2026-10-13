@@ -245,6 +245,18 @@ function renderRequiredCoverage(){
  current.textContent=shown(result.currentCoverage,'×');
  requiredPipeline.textContent=shown(result.requiredPipeline,'€');
  gap.textContent=shown(result.additionalPipeline,'€');
+ // Die Visualisierung verwendet die tatsächliche, berechnete Ziel-Coverage.
+ const cover=result.currentCoverage,requiredRatio=result.requiredCoverage;
+ const scale=Math.max(5,Math.ceil(Math.max(
+  Number.isFinite(cover)?cover:0,
+  Number.isFinite(requiredRatio)?requiredRatio:0
+ )*1.1));
+ $('#coverage-scale-max').textContent=nf0(scale)+'×';
+ $('#coverage-benchmark-label').textContent='Benötigt: '+(Number.isFinite(requiredRatio)?nf(requiredRatio,2)+'×':'—');
+ const marker=$('#coverage-target-marker');
+ marker.style.display=Number.isFinite(requiredRatio)?'block':'none';
+ if(Number.isFinite(requiredRatio))marker.style.left=(requiredRatio/scale*100)+'%';
+ $('#coverage-fill').style.width=Number.isFinite(cover)?Math.min(100,cover/scale*100)+'%':'0%';
  status.classList.remove('is-sufficient','is-shortfall');
  const effective=result.effectiveRatePercent;
  if(result.error==='invalid'){

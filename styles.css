@@ -280,3 +280,26 @@ body.dark .glossary-item summary small,body.dark .glossary-count{color:#c1d9d6}
 body.dark .required-method-fields label small,body.dark .required-methods label small{color:#d0e7d5}
 body.dark .stress-actions,body.dark .stress-fields label .field-help{color:#c6dfd0}
 body.dark .model-method p{color:#d0ead7}
+
+
+/* Dunkler Modus: helle semantische Textfarben auf dunklen Karten. */
+body.dark .overline{color:#b9e6c4}
+body.dark .micro-intro{color:#cfe6d7!important}
+body.dark .micro-intro a{color:#c4f0c9}
+body.dark .formula-large{color:#d8f3d9}
+body.dark .formula-large span{color:#c5ded1}
+body.dark .inline-link,body.dark .required-glossary{color:#c0eecb}
+body.dark .text-button,body.dark .calc-reset{color:#c0ebc7}
+body.dark .source-link,body.dark .factor-card button,body.dark .glossary-body button,
+body.dark .dependency-row button,body.dark .system-node .node-example{color:#c5edcd}
+body.dark .kpi-card-category,body.dark .card-term-links>span,body.dark .factor-tag,
+body.dark .lever>span,body.dark .reverse-step>span{color:#badfca}
+body.dark .under-note,body.dark .sources-wrap>p,body.dark .sources-wrap>small,
+body.dark .sources-list small{color:#c7dcce}
+body.dark .sources-wrap>p{color:#c7dcce}
+body.dark .result-line p{color:#bdd3d0}
+body.dark .required-footnote,body.dark .required-footnote a{color:#cce9d1}
+body.dark .detail-block.warning .detail-label{color:#f0d3a4}
+body.dark .filter-button.active{background:#cae9a7;border-color:#cae9a7;color:#203e2e}
+.influence-core small{color:#435f51}
+.influence-core-alt small{color:#405c70}

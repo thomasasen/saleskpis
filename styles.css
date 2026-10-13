@@ -609,3 +609,7 @@ body.dark .sidebar .side-link .ms-icon{color:#a0d4b5}
  .map-change-station .ms-icon{height:18px;width:18px}
  body.dark .map-change-station{color:#c2eabb}
 }
+
+
+.mobile-section-nav a.is-current{background:#e0f1d8;border-color:#9dc896;color:#174b37;font-weight:850}
+body.dark .mobile-section-nav a.is-current{background:#c7e9ae;border-color:#c7e9ae;color:#193d2c}

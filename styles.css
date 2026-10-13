@@ -257,3 +257,26 @@ body.dark .footer a{color:#d0e9d8}
 .micro-note{color:#3e6150}
 body.dark .repo-link{color:#c6d7df}
 body.dark .range-head{color:#d0e8d5}
+
+
+/* Kontrast-Härtung: kleine Hilfs- und Sekundärtexte bleiben AA-lesbar. */
+.required-methods label small{color:#44594c}
+.required-method-fields label small{color:#455a4d}
+.required-result-panel .detail-label,.detail-label{color:#345f4b}
+.influence-core span{color:#315e45}
+.influence-core-alt span{color:#385770}
+.factor-tag{color:#345b4b}
+.sources-wrap>p,.sources-list small{color:#455f50}
+.glossary-count{color:#4e6658}
+.glossary-item summary small{color:#526a73}
+.footer,.under-note{color:#4c6271}
+.result-line p{color:#516777}
+.stress-actions,.stress-fields label .field-help{color:#486758}
+.required-footnote{color:#4b6657}
+.model-method p{color:#426050}
+body.dark .required-result-panel .detail-label,body.dark .detail-label{color:#c8e8d1}
+body.dark .footer{color:#c4d9de}
+body.dark .glossary-item summary small,body.dark .glossary-count{color:#c1d9d6}
+body.dark .required-method-fields label small,body.dark .required-methods label small{color:#d0e7d5}
+body.dark .stress-actions,body.dark .stress-fields label .field-help{color:#c6dfd0}
+body.dark .model-method p{color:#d0ead7}

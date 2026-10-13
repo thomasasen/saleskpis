@@ -1,0 +1,28 @@
+name: Remove merged UX design branch
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/cleanup-ux-branch-once.yml
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    if: github.repository == 'thomasasen/saleskpis'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Delete merged UX branch after verifying PR and commit head
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch='feat/ux-information-architecture-visual-map-20261013'
+          expected='c029073ba5176f033c0083df2a75854fd7c39ff3'
+          merged="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/6" --jq '.merged_at')"
+          test -n "$merged" && test "$merged" != 'null'
+          head="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${branch}" --jq '.object.sha')"
+          test "$head" = "$expected"
+          gh api --silent -X DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/${branch}"
+          gh api "repos/${GITHUB_REPOSITORY}/branches?per_page=100" --jq '.[].name'

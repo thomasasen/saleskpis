@@ -665,7 +665,19 @@ function init(){
  $('#jump-return-button').addEventListener('click',goBackToSource);
  $('.kpi-map').addEventListener('click',event=>{
   const button=event.target.closest('[data-map-node]');
-  if(button)renderGraphStation(button.dataset.mapNode);
+  if(button){
+   renderGraphStation(button.dataset.mapNode);
+   if(window.matchMedia('(max-width:760px)').matches){
+    requestAnimationFrame(()=>{
+     $('#map-detail').scrollIntoView({behavior:motion(),block:'start'});
+     $('#map-detail-title').focus({preventScroll:true});
+    });
+   }
+  }
+ });
+ $('#map-change-station').addEventListener('click',()=>{
+  $('.kpi-map').scrollIntoView({behavior:motion(),block:'start'});
+  $('.map-node.is-selected')?.focus({preventScroll:true});
  });
 
  window.addEventListener('popstate',restoreFromHistory);

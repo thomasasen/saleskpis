@@ -103,7 +103,10 @@ try{
   const original=desktop.locator('#kpi-pipeline-coverage');
   await original.locator('.kpi-expand').click();
   await original.locator('.calc-input').first().fill('610000');
-  await original.locator('[data-glossary="sales-cycle"]').click();
+  const sourceLink=original.locator('[data-glossary="sales-cycle"]');
+  await sourceLink.scrollIntoViewIfNeeded();
+  const sourceY=await desktop.evaluate(()=>window.scrollY);
+  await sourceLink.click();
   await desktop.waitForURL('**/#begriff-sales-cycle');
   assert.equal(await desktop.locator('#begriff-sales-cycle').getAttribute('open'),'');
   assert.equal(await desktop.locator('#jump-return').isVisible(),true);
@@ -118,6 +121,7 @@ try{
   assert.equal(await desktop.locator('#kpi-search').inputValue(),'Pipeline Coverage');
   assert.equal(await desktop.locator('#kpi-pipeline-coverage .kpi-detail').isVisible(),true);
   assert.equal(await desktop.locator('#kpi-pipeline-coverage .calc-input').first().inputValue(),'610000');
+  await desktop.waitForFunction(y=>Math.abs(window.scrollY-y)<=5,sourceY);
   assert.equal(await desktop.locator('#jump-return').isVisible(),false);
   await desktop.goForward();
   assert.equal(new URL(desktop.url()).hash,'#begriff-sales-cycle');

@@ -583,3 +583,20 @@ body.dark .sidebar .side-link .ms-icon{color:#a0d4b5}
  .hero-actions .button{width:100%}
 }
 @media(print){.intent-grid{grid-template-columns:repeat(3,1fr)}.kpi-map{gap:12px}.kpi-map-edges{display:none}}
+
+
+/* The visual desktop map follows a left-to-right path and returns right-to-left. */
+@media(min-width:761px){
+ .kpi-map .map-node:nth-of-type(4){grid-column:3;grid-row:2}
+ .kpi-map .map-node:nth-of-type(5){grid-column:2;grid-row:2}
+ .kpi-map .map-node:nth-of-type(6){grid-column:1;grid-row:2}
+}
+@media(max-width:760px) and (min-width:351px){
+ .kpi-map .map-node:nth-of-type(3){grid-column:1;grid-row:2}
+ .kpi-map .map-node:nth-of-type(4){grid-column:2;grid-row:2}
+ .kpi-map .map-node:nth-of-type(5){grid-column:1;grid-row:3}
+ .kpi-map .map-node:nth-of-type(6){grid-column:2;grid-row:3}
+}
+@media(max-width:350px){
+ .kpi-map .map-node:nth-of-type(n){grid-column:auto;grid-row:auto}
+}

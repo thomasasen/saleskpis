@@ -213,6 +213,7 @@ try{
   await run('Mobiler Navigationslink zur Bibliothek bei '+width+' px',async()=>{
    await page.locator('.mobile-section-nav a[href="#bibliothek"]').click();
    assert.equal(new URL(page.url()).hash,'#bibliothek');
+   await page.waitForFunction(()=>document.querySelector('.mobile-section-nav a[href="#bibliothek"]')?.getAttribute('aria-current')==='location');
   });
   await page.close();
   await mobileContext.close();

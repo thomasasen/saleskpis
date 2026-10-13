@@ -22,6 +22,9 @@
       </a>
       <div class="sidebar-section"><span class="nav-caption">ENTDECKEN</span>
         <a class="side-link" href="#start"><span class="nav-glyph">⌂</span> Überblick</a>
+        <a class="side-link" href="#einflussfaktoren"><span class="nav-glyph">⇄</span> Coverage-Faktoren</a>
+        <a class="side-link" href="#coverage-stresstest"><span class="nav-glyph">≋</span> Coverage-Stresstest</a>
+        <a class="side-link" href="#glossar"><span class="nav-glyph">?</span> Begriffe erklärt</a>
         <a class="side-link" href="#zusammenhaenge"><span class="nav-glyph">⌘</span> Zusammenhänge</a>
         <a class="side-link" href="#rueckwaerts"><span class="nav-glyph">↗</span> Rückwärts planen</a>
         <a class="side-link" href="#bibliothek"><span class="nav-glyph">▤</span> KPI-Bibliothek</a>
@@ -66,7 +69,7 @@
           <div class="spotlight">
             <div class="spotlight-form">
               <div class="spotlight-top"><span class="spotlight-chip">POPULAR KPI</span><span class="spotlight-id">KPI / 001</span></div>
-              <h3>Pipeline Coverage</h3><div class="formula-large">Offene Pipeline <span>÷</span> Restziel</div>
+              <h3>Pipeline Coverage</h3><p class="micro-intro">Einfach gesagt: Wie oft passt die vorhandene Verkaufschance in das noch offene Vertriebsziel? <a href="#begriff-coverage" data-glossary="coverage">Begriff erklären ↗</a></p><div class="formula-large">Offene Pipeline <span>÷</span> Restziel</div>
               <p>Beide Werte müssen sich auf dieselbe Abschlussperiode und dieselbe Umsatzdefinition beziehen.</p>
               <div class="spotlight-inputs">
                 <label for="coverage-pipeline">Offene qualifizierte Pipeline <span>€</span><input id="coverage-pipeline" type="number" min="0" step="10000" inputmode="decimal" value="450000"></label>
@@ -82,6 +85,61 @@
               <div class="coverage-explain" id="coverage-explain">Du brauchst rechnerisch eine wertgewichtete Abschlussquote von mindestens 33,3 %, um dein Restziel zu erreichen.</div>
               <p class="micro-note">3× ist eine verbreitete Faustregel, kein Gesetz. Entscheidend sind Win Rate, Dealqualität und Timing.</p>
             </div>
+          </div>
+        </section>
+
+
+        <section class="section pad-section influence-section" id="einflussfaktoren" aria-labelledby="influence-title">
+          <div class="section-heading"><div><span class="overline">WAS BEEINFLUSST DIE COVERAGE?</span>
+            <h2 id="influence-title">3× Pipeline. Und trotzdem das Ziel verfehlt?</h2>
+            <p>Die reine Kennzahl zählt offenen Pipelinewert. Ob daraus im Zeitfenster Abschlüsse werden, hängt von weiteren Faktoren ab. Die Pfeile zeigen den Zusammenhang, nicht automatisch eine kausale Prognose.</p></div></div>
+          <div class="influence-axis" role="group" aria-label="Direkte Formel und wirtschaftliche Einflussgrößen">
+            <div class="influence-core"><span>BESTANDSAUFNAHME</span><strong>Offene Pipeline ÷ Restziel</strong><small>Ergebnis: nominelle Pipeline Coverage</small></div>
+            <div class="influence-pointer" aria-hidden="true">↓</div>
+            <div class="influence-core influence-core-alt"><span>QUALITÄT & TIMING</span><strong>Win Rate × fristgerechter Gewinnanteil</strong><small>Vereinfachte Einschätzung: Wie viel wird voraussichtlich gewonnen?</small></div>
+          </div>
+          <div class="factor-grid">
+            <article class="factor-card"><span class="factor-tag">ABSCHLUSSQUALITÄT</span><h3><a href="#begriff-win-rate" data-glossary="win-rate">Win Rate ↗</a> & <a href="#begriff-loss-rate" data-glossary="loss-rate">Loss Rate ↗</a></h3><p>Je weniger vom entschiedenen Dealwert tatsächlich gewonnen wird, desto mehr Pipeline wird benötigt. Zahlenbasierte und wertgewichtete Quote können stark abweichen.</p><button type="button" data-jump="win-rate-value">Wertgewichtete Win Rate ansehen ↗</button></article>
+            <article class="factor-card"><span class="factor-tag">ZEIT & FORTSCHRITT</span><h3><a href="#begriff-sales-cycle" data-glossary="sales-cycle">Sales Cycle ↗</a> & <a href="#begriff-slippage" data-glossary="slippage">Slippage ↗</a></h3><p>Ein Deal kann gewonnen werden, aber erst nach dem Quartalsende. Die gesamte durchschnittliche Dauer ist nicht automatisch die noch verbleibende Restlaufzeit.</p><button type="button" data-jump="avg-cycle">Sales Cycle berechnen ↗</button></article>
+            <article class="factor-card"><span class="factor-tag">VOLUMEN & KLUMPRISIKO</span><h3><a href="#begriff-deal-size" data-glossary="deal-size">Dealgröße ↗</a> & Anzahl</h3><p>Sechs Deals à 75.000 € sind riskanter als viele kleine, gleichwertige Deals, wenn einzelne Abschlüsse das Gesamtergebnis dominieren.</p><button type="button" data-jump="avg-deal">Dealgröße verstehen ↗</button></article>
+            <article class="factor-card"><span class="factor-tag">PIPELINE-HYGIENE</span><h3><a href="#begriff-sales-stage" data-glossary="sales-stage">Vertriebsphase ↗</a> & <a href="#begriff-close-date" data-glossary="close-date">Close Date ↗</a></h3><p>Nur echte, qualifizierte Opportunities mit plausiblen Abschlussdaten gehören in die betrachtete Periode. Bloß verschobene, veraltete Deals sind keine zusätzliche Substanz.</p><button type="button" data-jump="stage-age">Stage Aging ansehen ↗</button></article>
+          </div>
+        </section>
+
+        <section class="section pad-section stress-section" id="coverage-stresstest" aria-labelledby="stress-title">
+          <div class="section-heading"><div><span class="overline">LIVE / REALITÄTSCHECK</span><h2 id="stress-title">Der Pipeline-Coverage-Stresstest.</h2><p>Ändere die Annahmen: Warum kann selbst eine Coverage oberhalb von 3× eine Unterdeckung bedeuten?</p></div></div>
+          <div class="stress-layout">
+            <form id="coverage-lab-form" class="stress-inputs" autocomplete="off">
+              <div class="stress-fields">
+                <label for="stress-pipeline">Offene, qualifizierte Pipeline (€)<input id="stress-pipeline" type="number" min="0" step="1000" value="450000" required></label>
+                <label for="stress-goal">Noch zu erreichendes Ziel (€)<input id="stress-goal" type="number" min="0" step="1000" value="150000" required></label>
+                <label for="stress-win">Wertgewichtete Win Rate (%) <a href="#begriff-weighted-rate" data-glossary="weighted-rate" title="Begriff erklären">?</a><input id="stress-win" type="number" min="0" max="100" step="0.1" value="30" required></label>
+                <label for="stress-ontime">Fristgerechter Anteil erwarteter Gewinne (%) <span class="field-help">Bedingt auf einen Gewinn</span><input id="stress-ontime" type="number" min="0" max="100" step="0.1" value="80" required></label>
+                <label for="stress-deal">Ø Wert offener Opportunities (€) <a href="#begriff-deal-size" data-glossary="deal-size" title="Begriff erklären">?</a><input id="stress-deal" type="number" min="1" step="1000" value="75000" required></label>
+                <label for="stress-largest">Größter offener Deal (€)<input id="stress-largest" type="number" min="0" step="1000" value="175000" required></label>
+                <label for="stress-cycle">Ø gesamter Sales Cycle (Tage) <a href="#begriff-sales-cycle" data-glossary="sales-cycle" title="Begriff erklären">?</a><input id="stress-cycle" type="number" min="1" step="1" value="120" required></label>
+                <label for="stress-days">Tage bis Periodenende<input id="stress-days" type="number" min="0" step="1" value="60" required></label>
+              </div>
+              <div class="stress-actions"><button id="stress-reset" class="text-button" type="button">Beispielwerte zurücksetzen ↺</button><span>Keine Eingaben werden gespeichert oder versendet.</span></div>
+            </form>
+            <div class="stress-results">
+              <span class="detail-label">WENN DIE ANNAHMEN ZUTREFFEN</span>
+              <div class="stress-headlines">
+                <div><small>Nominelle Coverage</small><strong id="stress-coverage">3,0×</strong></div>
+                <div><small>Benötigte Coverage</small><strong id="stress-required">4,2×</strong></div>
+                <div class="stress-main-result"><small>Modellierter Abschlusswert im Zeitraum</small><strong id="stress-expected">108.000 €</strong></div>
+                <div><small>Restlücke zum Ziel</small><strong id="stress-gap">42.000 €</strong></div>
+                <div><small>Zusätzliche offene Pipeline nötig</small><strong id="stress-pipeline-gap">175.000 €</strong></div>
+                <div><small>Zusätzliche Ø Opportunities (aufgerundet)</small><strong id="stress-extra-deals">3</strong></div>
+              </div>
+              <div class="stress-interpretation" id="stress-interpretation" role="status" aria-live="polite"></div>
+              <div class="stress-warnings" id="stress-warnings" aria-live="polite"></div>
+            </div>
+          </div>
+          <div class="model-method">
+            <strong>Modellannahme, keine Forecast-Garantie:</strong>
+            <p>Erwarteter Wert = offene Pipeline × wertgewichtete Gewinnquote × Anteil der <em>bei Gewinn</em> rechtzeitig abgeschlossenen Werte. Die einfache Multiplikation ist nur bei passend definierten, ausreichend homogenen Quoten brauchbar. Für einen belastbaren Forecast: je Deal Wert × Wahrscheinlichkeit für <em>Gewinn und fristgerechten Abschluss</em> addieren. Der Sales Cycle dient hier bewusst nur als Plausibilitätskontrolle; eine Abschlusswahrscheinlichkeit lässt sich aus dem Durchschnitt allein nicht ableiten.</p>
+            <p><strong>Wichtiger Vergleich:</strong> Der durchschnittliche Wert <em>offener</em> Deals wird zur groben Stückzahlplanung benutzt. Der Durchschnitt <em>gewonnener</em> Deals ist nicht automatisch identisch.</p>
           </div>
         </section>
 
@@ -134,6 +192,15 @@
           <div class="result-line"><p id="result-count" role="status" aria-live="polite">Kennzahlen werden geladen …</p><button id="reset-filters" class="text-button" type="button">Filter zurücksetzen ↺</button></div>
           <div id="kpi-grid" class="kpi-grid" aria-label="KPI-Karten"></div>
           <div class="empty-state" id="empty-state" hidden><strong>Keine passenden Kennzahlen.</strong><p>Anderen Suchbegriff nutzen oder Filter zurücksetzen.</p><button type="button" id="empty-reset" class="button button-dark">Alle KPIs anzeigen</button></div>
+        </section>
+
+
+        <section class="section pad-section glossary-section" id="glossar" aria-labelledby="glossary-title">
+          <div class="section-heading"><div><span class="overline">GLOSSAR / OHNE VORWISSEN</span><h2 id="glossary-title">Vertriebssprache verständlich erklärt.</h2><p>Was bedeutet Sales Cycle, Opportunity oder ACV? Jeder Begriff bekommt eine einfache Erklärung, ein Rechen- oder Praxisbeispiel und einen typischen Denkfehler.</p></div></div>
+          <label class="search-field glossary-search" for="glossary-search"><span aria-hidden="true">⌕</span><span class="sr-only">Begriffe suchen</span><input id="glossary-search" type="search" placeholder="Begriff auf Deutsch oder Englisch suchen …" autocomplete="off"></label>
+          <p id="glossary-count" class="glossary-count" aria-live="polite"></p>
+          <div id="glossary-grid" class="glossary-grid"></div>
+          <p id="glossary-empty" class="glossary-empty" hidden>Zu diesem Suchbegriff ist noch keine Erklärung vorhanden.</p>
         </section>
 
         <section class="section pad-section methodology-section" id="methodik" aria-labelledby="method-title">

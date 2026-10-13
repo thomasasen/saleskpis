@@ -93,6 +93,34 @@ function formatValue(value,unit){
  return nf(value,1)+(unit?' '+unit:'');
 }
 function shortLabel(cat){return categories.find(c=>c.id===cat)?.name||cat;}
+
+function initSectionHighlight(){
+ const all=[...document.querySelectorAll('main > section[id]')];
+ const grouped={
+  start:'start',einstieg:'start',zusammenhaenge:'zusammenhaenge',
+  kernbeispiel:'kernbeispiel',einflussfaktoren:'kernbeispiel',
+  'coverage-stresstest':'kernbeispiel',rueckwaerts:'kernbeispiel',
+  bibliothek:'bibliothek',glossar:'glossar',methodik:'glossar'
+ };
+ let scheduled=false;
+ const update=()=>{
+  scheduled=false;
+  const edge=window.scrollY+Math.min(180,window.innerHeight*.32);
+  const current=all.filter(section=>section.offsetTop<=edge).at(-1)?.id||'start';
+  const selected=grouped[current]||'start';
+  document.querySelectorAll('.nav-primary .side-link,.mobile-section-nav a').forEach(link=>{
+   const active=link.getAttribute('href')==='#'+selected;
+   link.classList.toggle('is-current',active);
+   if(active)link.setAttribute('aria-current','location');
+   else link.removeAttribute('aria-current');
+  });
+ };
+ const schedule=()=>{if(!scheduled){scheduled=true;requestAnimationFrame(update)}};
+ window.addEventListener('scroll',schedule,{passive:true});
+ window.addEventListener('resize',schedule,{passive:true});
+ schedule();
+}
+
 function createButton(value,label,count,active){
  const b=document.createElement('button');
  b.type='button';b.className='filter-button'+(active?' active':'');b.dataset.filter=value;
@@ -584,7 +612,7 @@ function init(){
  $('#hero-kpi-count').textContent=kpis.length;
  $('#hero-category-count').textContent=categories.length;
  $('#hero-glossary-count').textContent=glossary.length;
- renderNav();renderGrid();renderSources();renderGlossary();renderGraphStation('akquise');initTheme();coverage();renderRequiredCoverage();reverse();renderCoverageStress();
+ renderNav();renderGrid();renderSources();renderGlossary();renderGraphStation('akquise');initTheme();coverage();renderRequiredCoverage();reverse();renderCoverageStress();initSectionHighlight();
  // Linkziel beim Teilen immer aus der tatsächlich geöffneten Seite ableiten.
  $('#mail-link').href='mailto:?subject='+encodeURIComponent('Sales KPI Atlas – Vertriebskennzahlen verstehen')+'&body='+encodeURIComponent('Ein praxisnahes Nachschlagewerk mit KPI-Rechnern:\n'+location.origin+location.pathname);
  els.filters.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b){selectFilter(b.dataset.filter,false);saveCurrentView()}});

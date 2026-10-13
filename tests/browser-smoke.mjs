@@ -28,9 +28,18 @@ try{
   })),null,2));
   assert.equal(serious.length,0,'Es gibt '+serious.length+' kritische/schwere WCAG-Verstöße');
  });
+ await run('Barrierefreiheit im Dark Mode',async()=>{
+  await desktop.locator('#theme-toggle').click();
+  const audit=await new AxeBuilder({page:desktop}).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();
+  const serious=audit.violations.filter(v=>['critical','serious'].includes(v.impact));
+  if(serious.length)console.log('Dark A11y',JSON.stringify(serious.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.slice(0,8).map(n=>({target:n.target,summary:n.failureSummary}))})),null,2));
+  await desktop.locator('#theme-toggle').click();
+  assert.equal(serious.length,0,'Dark Mode: '+serious.length+' schwere A11y-Verstöße');
+ });
  await run('Startseite und JavaScript-Initialisierung',async()=>{
   assert.equal((await desktop.locator('#hero-kpi-count').innerText()).trim(),'67');
   assert.equal((await desktop.locator('#required-coverage-value').innerText()).trim(),'4,17×');
+  assert.match(await desktop.locator('#coverage-benchmark-label').innerText(),/4,17×/);
   assert.equal(jsErrors.length,0,jsErrors.join('; '));
  });
  await run('Live-Änderung bestehende Pipeline propagiert in Bedarfsrechner',async()=>{
@@ -84,7 +93,8 @@ try{
  await context.close();
 
  for(const width of [1024,768,390,320]){
-  const page=await browser.newPage({viewport:{width,height:800},isMobile:false});
+  const mobileContext=await browser.newContext({viewport:{width,height:800},isMobile:false});
+  const page=await mobileContext.newPage();
   const errs=attachErrors(page);
   await page.goto(base,{waitUntil:'networkidle'});
   await run('Mobilnavigation und Layout bei '+width+' px',async()=>{
@@ -99,11 +109,18 @@ try{
    assert.ok(scrollWidth<=width+2,'Horizontales Überlaufen: '+scrollWidth+' > '+width);
    assert.equal(errs.length,0,errs.join('; '));
   });
+  if(width===390)await run('WCAG-Kontraste und Semantik auf Mobiltelefon',async()=>{
+   const audit=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();
+   const serious=audit.violations.filter(v=>['critical','serious'].includes(v.impact));
+   if(serious.length)console.log('Mobile A11y',JSON.stringify(serious.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.slice(0,8).map(n=>({target:n.target,summary:n.failureSummary}))})),null,2));
+   assert.equal(serious.length,0,'Mobil: '+serious.length+' schwere A11y-Verstöße');
+  });
   await run('Mobiler Navigationslink zur Bibliothek bei '+width+' px',async()=>{
    await page.locator('.mobile-section-nav a[href="#bibliothek"]').click();
    assert.equal(new URL(page.url()).hash,'#bibliothek');
   });
   await page.close();
+  await mobileContext.close();
  }
 }finally{
  await browser.close();

@@ -51,6 +51,18 @@ Dabei gilt \`Yield = in der Periode gewonnener Wert aus der eingefrorenen Startp
 
 **Grenze:** Dieser Faktor ist ein vereinfachter Erwartungswert, kein garantierter Mindestbestand. Vor allem unterschiedliche Dealgrößen, Segmente und Verkaufsphasen können die Übertragbarkeit historischer Win Rates beeinträchtigen. Die reine mittlere Sales-Cycle-Dauer darf nicht mechanisch in eine Fristquote umgerechnet werden. Nach Möglichkeit kalibrierten In-Period Yield aus vergleichbaren Pipeline-Snapshots verwenden.
 
+## Vollständiges Red-Team-Audit (13. Oktober 2026)
+
+Der dokumentierte Audit erfasst 67 KPI-Beispielrechnungen, Forecast-/Kohortenrisiken, Benchmarks, Sicherheit, responsive UX und Accessibility:
+
+**[Vollständiges Audit mit Prioritäten, Änderungen und offenen Risiken](docs/FULL_REDTEAM_AUDIT_2026-10-13.md)**.
+
+Der Ziel-Coverage-Multiplikator ist ein vereinfachtes Planungsmodell, **kein garantierter Abschluss**. Die neue Coverage-Visualisierung zeigt die individuell berechnete statt einer fixen 3×-Referenz.
+
+Die GitHub-Actions-Qualitätsprüfung beinhaltet jetzt sowohl Unit-Tests für sämtliche KPI-Beispielwerte als auch echte Chromium-Browser-Smoke-Tests (320 bis 1440 Pixel) und automatisierte axe-WCAG-2.1-AA-Prüfungen für helles und dunkles Design.
+
+Als Quelle wird zusätzlich Benchmarkit 2026 geführt. Werte aus Benchmarkit 2025, Benchmarkit 2026 und SaaS Capital 2025 sind **verschiedene Stichproben** und deshalb keine direkte Zeitreihe.
+
 ## Lokale Entwicklung
 
 Für Tests Node.js 22 installieren. Mit `npm test` laufen KPI-Formeltests; mit `npm run check` zusätzlich Syntaxprüfungen.

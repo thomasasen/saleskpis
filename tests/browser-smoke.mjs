@@ -173,6 +173,43 @@ try{
   assert.equal(await btn.getAttribute('aria-pressed'),'true');
   assert.match(await desktop.locator('#map-detail-description').innerText(),/Churn/);
  });
+ await run('Jede der 67 KPI-Karten besitzt vollständige Handlungsinterpretation',async()=>{
+  await desktop.goto(base,{waitUntil:'networkidle'});
+  await desktop.locator('#category-filters [data-filter="all"]').click();
+  assert.equal(await desktop.locator('.kpi-card').count(),67);
+  for(const card of await desktop.locator('.kpi-card').all()){
+   assert.equal(await card.locator('.guidance-panel').count(),1,'Guide fehlt: '+await card.getAttribute('data-id'));
+   assert.equal(await card.locator('.guidance-indicator').count(),3);
+   assert.equal(await card.locator('.guidance-reason-grid > div').count(),2);
+  }
+ });
+ await run('NRR zeigt in der Live-Berechnung einen mathematischen Warnhinweis',async()=>{
+  await desktop.goto(base+'/#kpi-nrr',{waitUntil:'networkidle'});
+  const card=desktop.locator('#kpi-nrr');
+  assert.equal(await card.locator('.guidance-panel').isVisible(),true);
+  assert.match(await card.locator('.guidance-reference').innerText(),/101 %/);
+  assert.match(await card.locator('.guidance-result-label').innerText(),/Bestandswert wächst/);
+  await card.locator('.calc-input').last().fill('0');
+  assert.match(await card.locator('.guidance-result-label').innerText(),/schrumpft/);
+  assert.match(await card.locator('.guidance-indicator.critical').innerText(),/100 %/);
+  const back=card.locator('.guidance-citation');
+  assert.match(await back.getAttribute('href'),/saas-capital/);
+ });
+ await run('Projektbudget: 10-Prozent-Praxisgrenze mit korrektem Quellenkontext',async()=>{
+  await desktop.goto(base+'/#kpi-project-overrun',{waitUntil:'networkidle'});
+  const card=desktop.locator('#kpi-project-overrun');
+  assert.match(await card.locator('.guidance-result-label').innerText(),/Über 10 %/);
+  await card.locator('.calc-input').first().fill('105000');
+  assert.match(await card.locator('.guidance-result-label').innerText(),/überschritten/);
+  assert.match(await card.locator('.guidance-citation').getAttribute('href'),/deltek/);
+ });
+ await run('KPI ohne allgemeingültigen Grenzwert bekommt keine erfundene Live-Ampel',async()=>{
+  await desktop.goto(base+'/#kpi-win-rate',{waitUntil:'networkidle'});
+  const card=desktop.locator('#kpi-win-rate');
+  assert.equal(await card.locator('.guidance-result').isVisible(),false);
+  assert.match(await card.locator('.guidance-evidence').innerText(),/Individueller/);
+  assert.match(await card.locator('.guidance-indicator.critical').innerText(),/Dealzahl/);
+ });
  await desktop.close();
  await context.close();
 
@@ -192,6 +229,13 @@ try{
    }
    assert.ok(scrollWidth<=width+2,'Horizontales Überlaufen: '+scrollWidth+' > '+width);
    assert.equal(errs.length,0,errs.join('; '));
+  });
+  if(width===320)await run('Schmale KPI-Praxisbewertungen ohne seitlichen Überlauf',async()=>{
+   await page.goto(base+'/#kpi-project-overrun',{waitUntil:'networkidle'});
+   const panel=page.locator('#kpi-project-overrun .guidance-panel');
+   assert.equal(await panel.isVisible(),true);
+   const scrollWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
+   assert.ok(scrollWidth<=322,'KPI-Praxispanel verursacht horizontales Scrollen: '+scrollWidth);
   });
   if(width===390)await run('WCAG-Kontraste und Semantik auf Mobiltelefon',async()=>{
    const audit=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();

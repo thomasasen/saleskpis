@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
+import AxeBuilder from '@axe-core/playwright';
 
 const base='http://127.0.0.1:8765';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
@@ -17,6 +18,15 @@ try{
  const desktop=await browser.newPage({viewport:{width:1440,height:900}});
  const jsErrors=attachErrors(desktop);
  await desktop.goto(base,{waitUntil:'networkidle'});
+ await run('Barrierefreiheit: keine kritischen oder schweren WCAG 2.1 AA-Verstöße',async()=>{
+  const audit=await new AxeBuilder({page:desktop}).withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();
+  const serious=audit.violations.filter(v=>v.impact==='serious'||v.impact==='critical');
+  if(serious.length)console.log('A11y-Audit',JSON.stringify(serious.map(v=>({
+    id:v.id,impact:v.impact,description:v.description,
+    nodes:v.nodes.slice(0,6).map(n=>({target:n.target,summary:n.failureSummary}))
+  })),null,2));
+  assert.equal(serious.length,0,'Es gibt '+serious.length+' kritische/schwere WCAG-Verstöße');
+ });
  await run('Startseite und JavaScript-Initialisierung',async()=>{
   assert.equal((await desktop.locator('#hero-kpi-count').innerText()).trim(),'67');
   assert.equal((await desktop.locator('#required-coverage-value').innerText()).trim(),'4,17×');

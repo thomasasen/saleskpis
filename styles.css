@@ -199,3 +199,34 @@ body.dark .required-glossary,body.dark .required-footnote a{color:#bceabb}
 @media(max-width:760px){.required-heading{display:block}.required-glossary{display:inline-block;margin-top:9px;padding-top:0}.required-coverage{padding:19px}.required-result-panel,.required-input-panel{padding:18px}.required-two-inputs{grid-template-columns:1fr 1fr}}
 @media(max-width:470px){.required-two-inputs{grid-template-columns:1fr}.required-comparison strong{font-size:25px}.required-comparison-secondary strong{font-size:19px}}
 @media print{.required-coverage{break-inside:avoid}.required-input-panel{display:none}.required-result-panel{background:#f3f3f3!important}.required-formula{background:#eee!important}}
+
+
+/* Audit 2026-10-13: Navigierbarkeit und Lesbarkeit auf kleinen Bildschirmen. */
+.mobile-section-nav{display:none}
+@media(max-width:1050px){
+ .mobile-section-nav{
+  display:flex;position:sticky;top:0;z-index:40;gap:6px;
+  padding:8px 14px;overflow-x:auto;overscroll-behavior-x:contain;
+  white-space:nowrap;scrollbar-width:thin;scroll-snap-type:x proximity;
+  background:var(--surface);border-bottom:1px solid var(--border);
+ }
+ .mobile-section-nav a{
+  flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;
+  scroll-snap-align:start;padding:10px 13px;min-height:44px;
+  border:1px solid var(--border);border-radius:8px;
+  color:var(--ink);text-decoration:none;font-size:12px;font-weight:750;
+ }
+ .mobile-section-nav a:hover,.mobile-section-nav a:focus-visible{background:#e3f0df;color:#234f3e}
+ html{scroll-padding-top:76px}
+ .kpi-card,.glossary-item,.required-coverage{scroll-margin-top:78px}
+}
+body.dark .mobile-section-nav{background:#193241}
+body.dark .mobile-section-nav a:hover,body.dark .mobile-section-nav a:focus-visible{background:#285343;color:#dff6dd}
+.calc-field label,.required-method-fields label small,.detail-block p,.method-cards p,.factor-card p,.glossary-body p,
+.required-footnote,.model-method p,.micro-note,.calc-error,.dependency-row p,.kpi-benchmark,
+.sources-wrap>p,.stress-fields label,.stress-interpretation{font-size:max(12px, .77rem)}
+.related-links button,.term-pill,.glossary-body button,.calc-reset,.text-button,.kpi-expand{min-height:40px}
+.filter-button{min-height:44px}
+.topbar .icon-button,.topbar .top-action{min-height:40px}
+@media(max-width:760px){.hero-footer{font-size:11px}.hero-footer span:last-child{display:flex}}
+@media print{.mobile-section-nav{display:none!important}}

@@ -39,6 +39,7 @@
       <header class="topbar">
         <div class="topbar-left"><span class="online-dot"></span><span>OPEN KNOWLEDGE BASE</span><span class="topbar-divider"></span><span>Für B2B Software & Consulting</span></div>
         <div class="topbar-actions">
+          <a href="#glossar" class="top-action glossary-top-link">Begriffe ↗</a>
           <button type="button" id="theme-toggle" class="icon-button" aria-label="Farbschema wechseln" title="Farbschema wechseln">◐</button>
           <button type="button" id="share-button" class="top-action" title="Seitenlink teilen">Link kopieren <span aria-hidden="true">↗</span></button>
           <a id="mail-link" class="top-action top-action-primary" href="mailto:?subject=Sales%20KPI%20Atlas&body=https%3A%2F%2Fthomasasen.github.io%2Fsaleskpis%2F">Per E-Mail teilen <span aria-hidden="true">↗</span></a>
@@ -170,16 +171,17 @@
             <form class="reverse-controls" id="reverse-form" autocomplete="off">
               <div><label for="reverse-target">Offenes Bookings-Ziel (€)</label><input id="reverse-target" type="number" min="0" value="200000"></div>
               <div><label for="reverse-win">Wertgewichtete Win Rate (%)</label><input id="reverse-win" type="number" min="0.1" max="100" step="0.1" value="25"></div>
+              <div><label for="reverse-ontime">Bei Gewinn rechtzeitig (%)</label><input id="reverse-ontime" type="number" min="0.1" max="100" step="0.1" value="80"></div>
               <div><label for="reverse-deal">Ø Opportunity-Wert (€)</label><input id="reverse-deal" type="number" min="1" value="40000"></div>
             </form>
             <div class="reverse-steps" aria-label="Rückwärtsrechnung">
               <div class="reverse-step"><span>SCHRITT 01</span><small>Restziel</small><strong id="reverse-out-target">200.000 €</strong><p>Was muss noch gewonnen werden?</p></div>
-              <div class="reverse-step"><span>SCHRITT 02</span><small>Erforderliche Coverage</small><strong id="reverse-out-factor">4,0×</strong><p>100 ÷ wertgewichtete Win Rate</p></div>
-              <div class="reverse-step"><span>SCHRITT 03</span><small>Benötigte offene Pipeline</small><strong id="reverse-out-pipeline">800.000 €</strong><p>Ziel × Coverage</p></div>
-              <div class="reverse-step"><span>SCHRITT 04</span><small>Nötige Opportunities</small><strong id="reverse-out-deals">20</strong><p>Auf ganze Deals aufgerundet</p></div>
+              <div class="reverse-step"><span>SCHRITT 02</span><small>Erforderliche Coverage</small><strong id="reverse-out-factor">5,0×</strong><p>1 ÷ (Win Rate × Fristanteil)</p></div>
+              <div class="reverse-step"><span>SCHRITT 03</span><small>Benötigte offene Pipeline</small><strong id="reverse-out-pipeline">1.000.000 €</strong><p>Ziel × Coverage</p></div>
+              <div class="reverse-step"><span>SCHRITT 04</span><small>Nötige Opportunities</small><strong id="reverse-out-deals">25</strong><p>Auf ganze Deals aufgerundet</p></div>
             </div>
           </div>
-          <p class="under-note">Vereinfachtes Modell ohne Slippage und ohne Zeitverzug in der Leadgenerierung. Bei unterschiedlichen Dealgrößen und Abschlussquoten nach Segment rechnen.</p>
+          <p class="under-note">Vereinfachtes Modell: Fristanteil bezeichnet den unter den Gewinnen rechtzeitig abgeschlossenen Wert. Leadgenerierung und Sales Cycle können zusätzlich die Umsetzbarkeit neuer Pipeline begrenzen. Quoten müssen aus vergleichbaren, wertbasierten Kohorten stammen.</p>
         </section>
 
         <section class="section pad-section library-section" id="bibliothek" aria-labelledby="library-title">

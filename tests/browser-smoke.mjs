@@ -141,6 +141,38 @@ try{
   assert.equal(await desktop.locator('#kpi-win-rate .kpi-detail').isVisible(),true);
   assert.equal(await desktop.locator('#jump-return').isVisible(),false);
  });
+ await run('Interaktive Zusammenhangskarte: fachlicher Drilldown und Zurücksprung',async()=>{
+  await desktop.goto(base,{waitUntil:'networkidle'});
+  assert.equal(await desktop.locator('.map-node').count(),6);
+  const node=desktop.locator('[data-map-node="pipeline"]');
+  await node.click();
+  assert.equal(await node.getAttribute('aria-pressed'),'true');
+  assert.equal(await desktop.locator('[data-map-node="akquise"]').getAttribute('aria-pressed'),'false');
+  assert.match(await desktop.locator('#map-detail-title').innerText(),/Volumen/);
+  assert.equal(await desktop.locator('#map-detail-links button').count(),3);
+  await desktop.locator('#map-detail-links [data-jump="required-coverage"]').click();
+  await desktop.waitForURL('**/#kpi-required-coverage');
+  assert.equal(await desktop.locator('#kpi-required-coverage .kpi-detail').isVisible(),true);
+  await desktop.locator('#jump-return-button').click();
+  await desktop.waitForURL(base+'/');
+  assert.equal(await desktop.locator('[data-map-node="pipeline"]').getAttribute('aria-pressed'),'true');
+  assert.match(await desktop.locator('#map-detail-title').innerText(),/Volumen/);
+ });
+ await run('Material-Symbole lokal geladen und keine Fremd-Stylesheets',async()=>{
+  const response=await desktop.request.get(base+'/material-icons.svg');
+  assert.equal(response.status(),200);
+  assert.match(await response.text(),/<symbol id="account_tree"/);
+  const styles=await desktop.locator('link[rel="stylesheet"]').evaluateAll(els=>els.map(el=>el.href));
+  assert.ok(styles.every(url=>new URL(url).origin===new URL(base).origin));
+ });
+ await run('Diagramm unterstützt Tastaturauswahl',async()=>{
+  await desktop.goto(base,{waitUntil:'networkidle'});
+  const btn=desktop.locator('[data-map-node="bestand"]');
+  await btn.focus();
+  await desktop.keyboard.press('Enter');
+  assert.equal(await btn.getAttribute('aria-pressed'),'true');
+  assert.match(await desktop.locator('#map-detail-description').innerText(),/Churn/);
+ });
  await desktop.close();
  await context.close();
 
@@ -166,6 +198,14 @@ try{
    const serious=audit.violations.filter(v=>['critical','serious'].includes(v.impact));
    if(serious.length)console.log('Mobile A11y',JSON.stringify(serious.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.slice(0,100).map(n=>({target:n.target,summary:n.failureSummary}))})),null,2));
    assert.equal(serious.length,0,'Mobil: '+serious.length+' schwere A11y-Verstöße');
+  });
+  if(width===390)await run('Mobile Wirkungsgrafik mit gut erreichbaren Touch-Zielen',async()=>{
+   const node=page.locator('[data-map-node="forecast"]');
+   await node.click();
+   assert.equal(await node.getAttribute('aria-pressed'),'true');
+   assert.ok(await page.locator('#map-detail-links [data-jump="forecast-error"]').isVisible());
+   const rect=await node.boundingBox();
+   assert.ok(rect.height>=44&&rect.width>=44,'Diagramm-Station muss Touch-Ziel bieten');
   });
   await run('Mobiler Navigationslink zur Bibliothek bei '+width+' px',async()=>{
    await page.locator('.mobile-section-nav a[href="#bibliothek"]').click();

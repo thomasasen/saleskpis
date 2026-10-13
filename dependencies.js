@@ -242,4 +242,10 @@ export const dependencies = {
       "explanation": "Abrechenbare Stunden müssen nicht vollständig realisiert oder bezahlt werden."
     }
   ]
+  ,"in-period-yield": [
+    {"relatedId":"pipeline-coverage","label":"Coverage-Ziel","kind":"Kalibrierung","explanation":"1 geteilt durch den historischen periodenbezogenen Pipeline Yield liefert einen orientierenden Mindestmultiplikator."},
+    {"relatedId":"win-rate-value","label":"Wertgewichtete Win Rate","kind":"Treiber","explanation":"Der Yield kann unter der wertgewichteten Abschlussquote liegen, weil nicht alle späteren Gewinne bereits innerhalb der Zielperiode eintreffen."},
+    {"relatedId":"slippage","label":"Dealverschiebungen","kind":"Timing","explanation":"Wert von Deals, die erst nach der Frist gewonnen werden, zählt nicht zu rechtzeitig abgeschlossenem Pipelinewert."}
+  ]
+
 };

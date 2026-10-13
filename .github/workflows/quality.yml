@@ -1,0 +1,29 @@
+name: Quality checks
+on:
+  push:
+    branches: [main, "feat/**"]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Validate JavaScript syntax
+        run: |
+          node --check kpis.js
+          node --check app.js
+      - name: Test KPI formulas and references
+        run: node --test tests/*.test.mjs
+      - name: Check required static assets
+        run: |
+          test -f index.html
+          test -f styles.css
+          test -f favicon.svg
+          test -f .nojekyll

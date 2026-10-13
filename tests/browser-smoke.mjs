@@ -76,6 +76,13 @@ try{
   await card.locator('.calc-input').first().fill('300000');
   assert.match(await card.locator('output').innerText(),/Monate/);
  });
+ await run('Barrierefreiheit bei geöffneter KPI-Karte',async()=>{
+  const audit=await new AxeBuilder({page:desktop})
+    .include('#kpi-grid').withTags(['wcag2a','wcag2aa','wcag21a','wcag21aa']).analyze();
+  const serious=audit.violations.filter(v=>['critical','serious'].includes(v.impact));
+  if(serious.length)console.log('Expanded KPI A11y',JSON.stringify(serious.map(v=>({id:v.id,nodes:v.nodes.slice(0,100).map(n=>({target:n.target,summary:n.failureSummary}))})),null,2));
+  assert.equal(serious.length,0,'Expanded KPI: '+serious.length+' schwere A11y-Verstöße');
+ });
  await run('Glossar erklärt Sales Cycle und verlinkt KPI',async()=>{
   await desktop.locator('#glossary-search').fill('Sales Cycle');
   const glossary=desktop.locator('.glossary-item').filter({hasText:'Sales Cycle'}).first();

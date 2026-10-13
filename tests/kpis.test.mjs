@@ -40,6 +40,9 @@ check('utilization',75);
 check('project-margin',37.5);
 check('arr-growth',25);
 check('rule-40',43);
+test('Rule of 40 erlaubt negative EBITDA-Margen',()=>{
+ assert.equal(evaluate(kpiById['rule-40'],[30,-15]),15);
+});
 check('dso',30);
 test('Divisionen durch 0 werden kontrolliert zurückgewiesen',()=>{
  assert.equal(evaluate(kpiById['pipeline-coverage'],[50000,0]),null);

@@ -248,3 +248,12 @@ body.dark .mobile-section-nav a:hover,body.dark .mobile-section-nav a:focus-visi
 .footer a{text-decoration:underline;text-underline-offset:3px}
 body.dark .brand small,body.dark .category-numeral{color:#c0d3d7}
 body.dark .footer a{color:#d0e9d8}
+
+
+/* Zweiter axe-Durchlauf: präziser AA-Kontrast auch bei kleinen Beschriftungen. */
+.repo-link{color:#506575}
+.section-heading p{color:#526577}
+.range-head{color:#395c4b}
+.micro-note{color:#3e6150}
+body.dark .repo-link{color:#c6d7df}
+body.dark .range-head{color:#d0e8d5}

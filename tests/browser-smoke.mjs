@@ -78,6 +78,12 @@ try{
   await run('Mobilnavigation und Layout bei '+width+' px',async()=>{
    assert.equal(await page.locator('.mobile-section-nav').isVisible(),true);
    const scrollWidth=await page.evaluate(()=>document.documentElement.scrollWidth);
+   if(scrollWidth>width+2){
+    const overflow=await page.evaluate(()=>[...document.querySelectorAll('body *')]
+     .filter(el=>{const r=el.getBoundingClientRect();return r.width>0&&r.right>innerWidth+2&&getComputedStyle(el).overflowX!=='auto';})
+     .map(el=>({tag:el.tagName,id:el.id,cls:typeof el.className==='string'?el.className.slice(0,70):'',right:Math.round(el.getBoundingClientRect().right)})).slice(0,12));
+    console.log('Overflow offenders',width,JSON.stringify(overflow));
+   }
    assert.ok(scrollWidth<=width+2,'Horizontales Überlaufen: '+scrollWidth+' > '+width);
    assert.equal(errs.length,0,errs.join('; '));
   });

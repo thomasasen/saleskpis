@@ -15,7 +15,8 @@ const attachErrors=page=>{
  return errors;
 };
 try{
- const desktop=await browser.newPage({viewport:{width:1440,height:900}});
+ const context=await browser.newContext({viewport:{width:1440,height:900}});
+ const desktop=await context.newPage();
  const jsErrors=attachErrors(desktop);
  await desktop.goto(base,{waitUntil:'networkidle'});
  await run('Barrierefreiheit: keine kritischen oder schweren WCAG 2.1 AA-Verstöße',async()=>{
@@ -80,6 +81,7 @@ try{
   assert.equal(await card.locator('.kpi-expand').getAttribute('aria-expanded'),'true');
  });
  await desktop.close();
+ await context.close();
 
  for(const width of [1024,768,390,320]){
   const page=await browser.newPage({viewport:{width,height:800},isMobile:false});

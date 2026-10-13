@@ -1,0 +1,51 @@
+name: One-time merged branch cleanup
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/cleanup-merged-branches-once.yml
+permissions:
+  contents: write
+jobs:
+  delete-merged-branches:
+    if: github.repository == 'thomasasen/saleskpis'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Delete only confirmed merged branch heads
+        shell: bash
+        run: |
+          set -euo pipefail
+          branches=(
+            'feat/sales-kpi-atlas-20261013'
+            'feat/redteam-coverage-glossary-20261013'
+            'feat/required-coverage-calculator-20261013'
+            'audit/full-redteam-hardening-20261013'
+          )
+          prs=(1 2 3 4)
+          expected_shas=(
+            '8b2e65c60b49079a3a74a5a4f6ef141f1aaaa186'
+            '81b44cadbec60cf2d74a9693e5266589c292c13f'
+            'f20f0a79063459798b0d2800b40df8b5ff93ac76'
+            'e448e4ca8d048afe1aedb3bce829e4a85fa4d7c8'
+          )
+          for i in "${!branches[@]}"; do
+            branch="${branches[$i]}"
+            pr="${prs[$i]}"
+            merged_at="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${pr}" --jq '.merged_at')"
+            if [[ -z "$merged_at" || "$merged_at" == 'null' ]]; then
+              echo "::error::PR ${pr} has not been merged; refusing to delete ${branch}"
+              exit 1
+            fi
+            current_sha="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${branch}" --jq '.object.sha')"
+            if [[ "$current_sha" != "${expected_shas[$i]}" ]]; then
+              echo "::error::Head of ${branch} has changed; refusing to delete it."
+              exit 1
+            fi
+            echo "Deleting merged PR #${pr} branch ${branch}"
+            gh api --silent -X DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/${branch}"
+          done
+          echo 'Remaining branches:'
+          gh api "repos/${GITHUB_REPOSITORY}/branches?per_page=100" --jq '.[].name'

@@ -11,7 +11,10 @@
 - Rückwärtsplanung von Restziel über wertgewichtete Abschlussquote zum benötigten Pipelinewert und zur Opportunity-Anzahl.
 - 67 durchsuchbare KPI-Karten mit eigenen Rechnern und Querverweisen.
 - **Rücksprung nach jedem internen Querverweis:** Sichtbarer Button „Zurück zur vorherigen Stelle“ und nativer Browser-Zurück/Vorwärts-Verlauf. Beim Rückweg werden Suchbegriff, Themenfilter, geöffnete KPI-/Glossareinträge, KPI-Rechnereingaben und Scrollposition wiederhergestellt. Auch Abschnittssprünge und mehrstufige Verweise sind berücksichtigt. Direkt aufgerufene Links zeigen keinen irreführenden Rückbutton.
-- Grafische Wirkungskette Akquise → Pipeline → Abschluss → Wachstum.
+- **Interaktives, barrierearm navigierbares KPI-Wirkungsmodell** mit sechs Stationen: Akquise → Pipeline → Abschluss → Forecast → Kundenbindung → Wirtschaftlichkeit. Jede Station erklärt fachliche Beziehungen und öffnet drei zugehörige KPI-Rechner; die Karte behauptet keine automatisch kausalen oder addierbaren Beziehungen.
+- **Aufgabenorientierter Einstieg:** „Zusammenhänge verstehen“, „Ziel durchrechnen“ oder „Kennzahl nachschlagen“. Die fünf Hauptbereiche sind klar beschriftet, Vertiefungen und Themenfilter liegen in aufklappbaren Menüs.
+- **Google Material Symbols Rounded** aus dem offiziellen Iconset (https://fonts.google.com/icons) als **lokale SVG-Sprite-Datei** statt externem Font-Request. Lizenz: `MATERIAL_SYMBOLS_LICENSE.txt` (Apache-2.0). Keine zusätzlichen externen Abhängigkeiten.
+- **[Dokumentiertes UX-Konzept mit simulierter Sechs-Rollen-Design-Challenge](docs/UX_CONCEPT_2026-10-13.md)** (CRO, CSO, Head of Sales, Senior/Junior Account Management, Sales Operations). Diese Expertenperspektiven sind modelliert, keine realen Interviews.
 - **Coverage-Stresstest** mit wertgewichteter Win Rate, fristgerechtem Gewinnanteil, Dealgröße, Konzentrationsrisiko und Sales Cycle als Plausibilitätscheck.
 - **41 deutsch erklärte Fachbegriffe** mit Beispielen, Denkfehlern und Links zu passenden Rechnern.
 - **Gerichtete KPI-Abhängigkeiten** für wichtige Kennzahlen: direkt, indirekt, zeitlich oder risikobezogen.

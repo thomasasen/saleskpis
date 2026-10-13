@@ -4,6 +4,77 @@ import {diagnoseCoverage,calculateRequiredCoverage} from './coverage-model.js';
 import {categories,kpis,kpiById,sources,evaluate} from './kpis.js';
 
 const $=selector=>document.querySelector(selector);
+const materialIcon=name=>'<svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#'+name+'"></use></svg>';
+const graphStations={
+ akquise:{
+  label:'01 / AKQUISE',
+  title:'Aus Kontakten qualifizierte Chancen machen',
+  description:'Hier entsteht der Zufluss: Nicht die Anzahl der Leads allein zählt, sondern wie viele Kontakte zu relevanten, bearbeitbaren Opportunities werden.',
+  caution:'Achtung: Hohe Lead-Mengen oder Conversion-Raten garantieren weder Dealqualität noch Umsatz. Gleiche Lead-Kohorten vergleichen.',
+  kpis:['lead-conversion','sql-opportunity','source-yield']
+ },
+ pipeline:{
+  label:'02 / PIPELINE',
+  title:'Volumen und Abschlusschancen beurteilen',
+  description:'Die Pipeline zeigt offene Verkaufschancen. Die benötigte Coverage hängt unter anderem von der rechtzeitigen Wertrealisierung ab – nicht von einer pauschalen 3×-Regel.',
+  caution:'Wichtige Abgrenzung: Nominale Coverage ist keine Gewinnwahrscheinlichkeit. Perioden- und Stichtagskohorten konsistent halten.',
+  kpis:['pipeline-coverage','required-coverage','in-period-yield']
+ },
+ abschluss:{
+  label:'03 / ABSCHLUSS',
+  title:'Erfolg in gewonnene Aufträge übersetzen',
+  description:'Abschlussquote, durchschnittlicher Dealwert und Auftragsvolumen erklären, wie viel Wert aus qualifizierten Chancen tatsächlich gewonnen wird.',
+  caution:'Stückzahlbasierte und wertgewichtete Win Rate beantworten unterschiedliche Fragen. Zeiträume und Segmente nicht vermischen.',
+  kpis:['win-rate-value','avg-deal','quota-attainment']
+ },
+ forecast:{
+  label:'04 / FORECAST',
+  title:'Abschlusszeitpunkt und Prognose prüfen',
+  description:'Forecast-Güte hängt nicht nur von Pipelinevolumen ab: Verschobene Close Dates und optimistische Commit-Angaben können die Periodenprognose verzerren.',
+  caution:'Eine gewichtete Pipeline ist nicht automatisch ein Forecast für einen Zeitraum. Zeitfenster und Fehlerdefinition separat prüfen.',
+  kpis:['forecast-error','slippage','commit-hit']
+ },
+ bestand:{
+  label:'05 / KUNDENBINDUNG',
+  title:'Wert des vorhandenen Kundenstamms sichern',
+  description:'Churn und Expansion verändern den Bestand unabhängig davon, wie viele neue Logos akquiriert werden. NRR berücksichtigt Expansion, GRR nicht.',
+  caution:'Retention nur anhand derselben Startkundenkohorte bewerten. Neukunden zählen nicht zum NRR-Zähler.',
+  kpis:['nrr','grr','logo-churn']
+ },
+ effizienz:{
+  label:'06 / EFFIZIENZ',
+  title:'Wachstum und Wirtschaftlichkeit zusammenführen',
+  description:'Ein steigender Auftragseingang kann teuer erkauft sein. Akquisekosten, Bruttomarge und produktive Kapazität helfen dabei, wirtschaftliches Wachstum zu bewerten.',
+  caution:'CAC Payback, Consulting-Margen und SaaS-Bruttomargen verwenden verschiedene Bezugsgrößen. Geschäftsmodelle nicht blind vergleichen.',
+  kpis:['cac-payback','gross-margin','project-margin']
+ }
+};
+let selectedGraphStation='akquise';
+function renderGraphStation(id,{focus=false}={}){
+ const station=graphStations[id];if(!station)return;
+ selectedGraphStation=id;
+ document.querySelectorAll('[data-map-node]').forEach(button=>{
+  const active=button.dataset.mapNode===id;
+  button.classList.toggle('is-selected',active);
+  button.setAttribute('aria-pressed',String(active));
+ });
+ $('#map-detail-kicker').textContent=station.label;
+ $('#map-detail-title').textContent=station.title;
+ $('#map-detail-description').textContent=station.description;
+ $('#map-detail-caution').textContent=station.caution;
+ const container=$('#map-detail-links');
+ container.replaceChildren(...station.kpis.filter(k=>kpiById[k]).map(id=>{
+  const button=document.createElement('button');
+  button.type='button';button.className='map-kpi-link';
+  button.dataset.jump=id;
+  const strong=document.createElement('strong');strong.textContent=kpiById[id].title;
+  const ico=document.createElement('span');ico.className='map-kpi-action';ico.innerHTML=materialIcon('arrow_forward');
+  button.append(strong,ico);return button;
+ }));
+ if(focus)$('#map-detail-title').focus({preventScroll:true});
+ saveCurrentView();
+}
+
 const els={
  filters:$('#category-filters'),nav:$('#category-nav'),grid:$('#kpi-grid'),
  search:$('#kpi-search'),count:$('#result-count'),empty:$('#empty-state'),toast:$('#toast')
@@ -22,6 +93,34 @@ function formatValue(value,unit){
  return nf(value,1)+(unit?' '+unit:'');
 }
 function shortLabel(cat){return categories.find(c=>c.id===cat)?.name||cat;}
+
+function initSectionHighlight(){
+ const all=[...document.querySelectorAll('main > section[id]')];
+ const grouped={
+  start:'start',einstieg:'start',zusammenhaenge:'zusammenhaenge',
+  kernbeispiel:'kernbeispiel',einflussfaktoren:'kernbeispiel',
+  'coverage-stresstest':'kernbeispiel',rueckwaerts:'kernbeispiel',
+  bibliothek:'bibliothek',glossar:'glossar',methodik:'glossar'
+ };
+ let scheduled=false;
+ const update=()=>{
+  scheduled=false;
+  const edge=window.scrollY+Math.min(180,window.innerHeight*.32);
+  const current=all.filter(section=>section.offsetTop<=edge).at(-1)?.id||'start';
+  const selected=grouped[current]||'start';
+  document.querySelectorAll('.nav-primary .side-link,.mobile-section-nav a').forEach(link=>{
+   const active=link.getAttribute('href')==='#'+selected;
+   link.classList.toggle('is-current',active);
+   if(active)link.setAttribute('aria-current','location');
+   else link.removeAttribute('aria-current');
+  });
+ };
+ const schedule=()=>{if(!scheduled){scheduled=true;requestAnimationFrame(update)}};
+ window.addEventListener('scroll',schedule,{passive:true});
+ window.addEventListener('resize',schedule,{passive:true});
+ schedule();
+}
+
 function createButton(value,label,count,active){
  const b=document.createElement('button');
  b.type='button';b.className='filter-button'+(active?' active':'');b.dataset.filter=value;
@@ -35,7 +134,7 @@ function renderNav(){
    const a=document.createElement('a');a.href='#bibliothek';
    a.className='category-link'+(state.category===c.id?' active':'');
    a.dataset.filter=c.id;
-   const n=document.createElement('span');n.className='category-numeral';n.textContent=c.icon;
+   const n=document.createElement('span');n.className='category-numeral';n.innerHTML=materialIcon(({akquise:'groups',pipeline:'account_tree',abschluss:'trending_up',saas:'hub',effizienz:'analytics',consulting:'calculate',steuerung:'query_stats'})[c.id]||'space_dashboard');
    a.appendChild(n);a.appendChild(document.createTextNode(c.name));els.nav.appendChild(a);
  }
 }
@@ -148,7 +247,7 @@ function cardMarkup(k){
   '<div class="kpi-main"><div class="kpi-card-head"><span class="kpi-card-category">'+escapeHtml(shortLabel(k.category))+'</span><span class="kpi-card-level">'+escapeHtml(k.level)+'</span></div>'+
   '<h3>'+escapeHtml(k.title)+'</h3><p class="kpi-summary">'+escapeHtml(k.description)+'</p>'+
   '<p class="kpi-benchmark"><span>EINORDNUNG</span> · '+escapeHtml(k.benchmark)+'</p>'+
-  '<button type="button" class="kpi-expand" aria-expanded="false" aria-controls="detail-'+escapeHtml(k.id)+'">Formel, Beispiel & Rechner anzeigen <span class="expand-symbol" aria-hidden="true">+</span></button></div>'+
+  '<button type="button" class="kpi-expand" aria-expanded="false" aria-controls="detail-'+escapeHtml(k.id)+'">Formel, Beispiel & Rechner anzeigen <span class="expand-symbol" aria-hidden="true">'+materialIcon('arrow_forward')+'</span></button></div>'+
   '<div id="detail-'+escapeHtml(k.id)+'" class="kpi-detail" hidden>'+
   termLinksForKpi(k)+'<span class="detail-label">Die Formel</span><div class="formula-box">'+escapeHtml(k.formula)+'</div>'+
   '<span class="detail-label">Beispielrechnung</span><p class="sample-line">'+escapeHtml(k.example)+'</p>'+
@@ -256,6 +355,7 @@ function captureView(source){
   category:state.category,
   query:state.query,
   glossaryQuery:$('#glossary-search').value,
+  graphStation:selectedGraphStation,
   openCards:[...els.grid.querySelectorAll('.kpi-card.open')].map(card=>({
    id:card.dataset.id,
    values:[...card.querySelectorAll('.calc-input')].map(input=>input.value)
@@ -293,6 +393,7 @@ function restoreView(snapshot){
   });
   updateCardResult(card);
  }
+ renderGraphStation(graphStations[snapshot.graphStation]?snapshot.graphStation:'akquise');
  $('#glossary-search').value=snapshot.glossaryQuery||'';
  renderGlossary();
  for(const id of snapshot.openGlossary||[]){
@@ -504,11 +605,14 @@ function renderSources(){
 function initTheme(){
  try{if(localStorage.getItem('saleskpi-theme')==='dark')document.body.classList.add('dark')}catch{}
  $('#theme-toggle').setAttribute('aria-pressed',String(document.body.classList.contains('dark')));
+ $('#theme-toggle').innerHTML=materialIcon(document.body.classList.contains('dark')?'light_mode':'dark_mode');
 }
 function init(){
  try{history.scrollRestoration='manual'}catch{}
  $('#hero-kpi-count').textContent=kpis.length;
- renderNav();renderGrid();renderSources();renderGlossary();initTheme();coverage();renderRequiredCoverage();reverse();renderCoverageStress();
+ $('#hero-category-count').textContent=categories.length;
+ $('#hero-glossary-count').textContent=glossary.length;
+ renderNav();renderGrid();renderSources();renderGlossary();renderGraphStation('akquise');initTheme();coverage();renderRequiredCoverage();reverse();renderCoverageStress();initSectionHighlight();
  // Linkziel beim Teilen immer aus der tatsächlich geöffneten Seite ableiten.
  $('#mail-link').href='mailto:?subject='+encodeURIComponent('Sales KPI Atlas – Vertriebskennzahlen verstehen')+'&body='+encodeURIComponent('Ein praxisnahes Nachschlagewerk mit KPI-Rechnern:\n'+location.origin+location.pathname);
  els.filters.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b){selectFilter(b.dataset.filter,false);saveCurrentView()}});
@@ -566,6 +670,7 @@ function init(){
  $('#theme-toggle').addEventListener('click',()=>{
    const active=document.body.classList.toggle('dark');
    $('#theme-toggle').setAttribute('aria-pressed',String(active));
+   $('#theme-toggle').innerHTML=materialIcon(active?'light_mode':'dark_mode');
    try{localStorage.setItem('saleskpi-theme',active?'dark':'light')}catch{}
  });
  $('#share-button').addEventListener('click',async()=>{
@@ -586,6 +691,23 @@ function init(){
   if(e.key==='Escape'&&document.activeElement===els.search){els.search.blur()}
  });
  $('#jump-return-button').addEventListener('click',goBackToSource);
+ $('.kpi-map').addEventListener('click',event=>{
+  const button=event.target.closest('[data-map-node]');
+  if(button){
+   renderGraphStation(button.dataset.mapNode);
+   if(window.matchMedia('(max-width:760px)').matches){
+    requestAnimationFrame(()=>{
+     $('#map-detail').scrollIntoView({behavior:motion(),block:'start'});
+     $('#map-detail-title').focus({preventScroll:true});
+    });
+   }
+  }
+ });
+ $('#map-change-station').addEventListener('click',()=>{
+  $('.kpi-map').scrollIntoView({behavior:motion(),block:'start'});
+  $('.map-node.is-selected')?.focus({preventScroll:true});
+ });
+
  window.addEventListener('popstate',restoreFromHistory);
  window.addEventListener('hashchange',()=>{
   // Popstate verarbeitet Browser-Zurück bereits; Hashchange nicht doppelt ausführen.

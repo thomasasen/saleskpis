@@ -60,7 +60,7 @@ function getVisible(){
 function cardMarkup(k){
  const inputs=k.fields.map((f,i)=>{
   const id='input-'+k.id+'-'+i;
-  return '<div class="calc-field"><label for="'+id+'">'+escapeHtml(f.name)+'</label><div class="calc-input-wrap"><input class="calc-input" type="number" min="0" step="any" inputmode="decimal" id="'+id+'" data-index="'+i+'" value="'+escapeHtml(f.value)+'" aria-label="'+escapeHtml(f.name)+'"><span class="calc-unit" aria-hidden="true">'+escapeHtml(f.unit)+'</span></div></div>';
+  return '<div class="calc-field"><label for="'+id+'">'+escapeHtml(f.name)+'</label><div class="calc-input-wrap"><input class="calc-input" type="number"'+(k.id==='rule-40'?'':' min="0"')+' step="any" inputmode="decimal" id="'+id+'" data-index="'+i+'" value="'+escapeHtml(f.value)+'" aria-label="'+escapeHtml(f.name)+'"><span class="calc-unit" aria-hidden="true">'+escapeHtml(f.unit)+'</span></div></div>';
  }).join('');
  const related=k.related.filter(id=>kpiById[id]).map(id=>'<button type="button" data-jump="'+escapeHtml(id)+'">'+escapeHtml(kpiById[id].title)+' ↗</button>').join('');
  const ref=sources[k.source];
@@ -100,7 +100,7 @@ function updateCardResult(article){
  const result=evaluate(k,raw);
  article.querySelector('output').textContent=formatValue(result,k.unit);
  const error=article.querySelector('.calc-error');
- if(result===null)error.textContent='Bitte gültige nichtnegative Werte eingeben; Nenner und erforderliche Prozentwerte müssen größer als 0 sein.';
+ if(result===null)error.textContent='Bitte gültige Zahlen eingeben. Negative Werte sind nur bei der Rule of 40 erlaubt; Nenner und erforderliche Prozentwerte müssen größer als 0 sein.';
  else if(k.id==='grr'&&(result>100||result<0))error.textContent='Plausibilitätswarnung: GRR muss zwischen 0 und 100 % liegen. Churn-/Contraction-Werte prüfen.';
  else if(k.id==='nrr'&&result<0)error.textContent='Plausibilitätswarnung: Negativer Kohortenumsatz ist nicht sinnvoll. Eingaben prüfen.';
  else error.textContent='';

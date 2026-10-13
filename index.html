@@ -20,16 +20,27 @@
         <span class="brand-icon" aria-hidden="true"><span></span><span></span><span></span></span>
         <span><strong>SALES<span class="brand-light">/KPI</span></strong><small>ATLAS & PLAYBOOK</small></span>
       </a>
-      <div class="sidebar-section"><span class="nav-caption">ENTDECKEN</span>
-        <a class="side-link" href="#start"><span class="nav-glyph">⌂</span> Überblick</a>
-        <a class="side-link" href="#einflussfaktoren"><span class="nav-glyph">⇄</span> Coverage-Faktoren</a>
-        <a class="side-link" href="#coverage-stresstest"><span class="nav-glyph">≋</span> Coverage-Stresstest</a>
-        <a class="side-link" href="#glossar"><span class="nav-glyph">?</span> Begriffe erklärt</a>
-        <a class="side-link" href="#zusammenhaenge"><span class="nav-glyph">⌘</span> Zusammenhänge</a>
-        <a class="side-link" href="#rueckwaerts"><span class="nav-glyph">↗</span> Rückwärts planen</a>
-        <a class="side-link" href="#bibliothek"><span class="nav-glyph">▤</span> KPI-Bibliothek</a>
-      </div>
-      <div class="sidebar-section"><span class="nav-caption">THEMENGEBIETE</span><nav id="category-nav" aria-label="KPI-Themengebiete"></nav></div>
+      <nav class="sidebar-section nav-primary" aria-label="Hauptbereiche">
+        <span class="nav-caption">DEIN WEG DURCH DEN ATLAS</span>
+        <a class="side-link" href="#start"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#space_dashboard"></use></svg> <span>Überblick</span></a>
+        <a class="side-link" href="#zusammenhaenge"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#account_tree"></use></svg> <span>KPI-Zusammenhänge</span></a>
+        <a class="side-link" href="#bibliothek"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#menu_book"></use></svg> <span>KPI-Bibliothek</span></a>
+        <a class="side-link" href="#kernbeispiel"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#calculate"></use></svg> <span>Pipeline berechnen</span></a>
+        <a class="side-link" href="#glossar"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#school"></use></svg> <span>Begriffe & Lernen</span></a>
+      </nav>
+      <details class="sidebar-expander">
+        <summary>Weiterführende Werkzeuge <svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#arrow_forward"></use></svg></summary>
+        <div class="sidebar-subnav">
+          <a href="#coverage-stresstest">Coverage-Stresstest</a>
+          <a href="#rueckwaerts">Rückwärtsplanung</a>
+          <a href="#einflussfaktoren">Coverage-Einflussfaktoren</a>
+          <a href="#methodik">Methodik & Quellen</a>
+        </div>
+      </details>
+      <details class="sidebar-expander topic-expander">
+        <summary>Alle 7 Themengebiete <svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#arrow_forward"></use></svg></summary>
+        <nav id="category-nav" aria-label="KPI-Themengebiete"></nav>
+      </details>
       <div class="sidebar-bottom">
         <div class="sidebar-note"><span class="tiny-dot"></span><b>WISSEN. KEIN BUZZWORD-BINGO.</b><p>Praxisnah erklärt, mit offenen Formeln und überprüfbaren Quellen.</p></div>
         <a class="repo-link" href="https://github.com/thomasasen/saleskpis" target="_blank" rel="noopener noreferrer">Projekt auf GitHub <span aria-hidden="true">↗</span></a>
@@ -37,42 +48,51 @@
     </aside>
     <div class="workspace">
       <header class="topbar">
-        <div class="topbar-left"><span class="online-dot"></span><span>OPEN KNOWLEDGE BASE</span><span class="topbar-divider"></span><span>Für B2B Software & Consulting</span></div>
+        <div class="topbar-left"><span class="topbar-product">Sales KPI Atlas</span><span class="topbar-divider"></span><span>Wissens- & Rechenwerkzeug für B2B-Vertrieb</span></div>
         <div class="topbar-actions">
-          <a href="#glossar" class="top-action glossary-top-link">Begriffe ↗</a>
-          <button type="button" id="theme-toggle" class="icon-button" aria-label="Farbschema wechseln" title="Farbschema wechseln">◐</button>
-          <button type="button" id="share-button" class="top-action" title="Seitenlink teilen">Link kopieren <span aria-hidden="true">↗</span></button>
-          <a id="mail-link" class="top-action top-action-primary" href="mailto:?subject=Sales%20KPI%20Atlas&body=https%3A%2F%2Fthomasasen.github.io%2Fsaleskpis%2F">Per E-Mail teilen <span aria-hidden="true">↗</span></a>
+          <a href="#bibliothek" class="top-action top-search"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#search"></use></svg> <span>KPIs finden</span></a>
+          <button type="button" id="theme-toggle" class="icon-button" aria-label="Farbschema wechseln" title="Farbschema wechseln"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#dark_mode"></use></svg></button>
+          <button type="button" id="share-button" class="top-action" title="Seitenlink kopieren"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#share"></use></svg> <span>Link kopieren</span></button>
+          <a id="mail-link" class="top-action top-action-primary" href="mailto:?subject=Sales%20KPI%20Atlas"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#arrow_forward"></use></svg> <span>Teilen</span></a>
         </div>
       </header>
-      <nav class="mobile-section-nav" aria-label="Schnellnavigation zu den Seitenabschnitten">
-        <a href="#start">Überblick</a>
-        <a href="#kernbeispiel">Coverage</a>
-        <a href="#coverage-benoetigt">Coverage berechnen</a>
-        <a href="#coverage-stresstest">Stresstest</a>
-        <a href="#bibliothek">KPIs</a>
-        <a href="#glossar">Glossar</a>
-        <a href="#methodik">Methodik</a>
+      <nav class="mobile-section-nav" aria-label="Hauptnavigation">
+        <a href="#start"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#space_dashboard"></use></svg> Überblick</a>
+        <a href="#zusammenhaenge"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#account_tree"></use></svg> Zusammenhänge</a>
+        <a href="#bibliothek"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#menu_book"></use></svg> KPIs</a>
+        <a href="#kernbeispiel"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#calculate"></use></svg> Rechner</a>
+        <a href="#glossar"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#school"></use></svg> Begriffe</a>
       </nav>
       <main id="main">
         <section class="hero" id="start" aria-labelledby="hero-title">
           <div class="hero-copy">
-            <div class="eyebrow"><span class="accent-line"></span> DAS NACHSCHLAGEWERK FÜR MODERNEN VERTRIEB</div>
-            <h1 id="hero-title">Zahlen verstehen.<br><em>Vertrieb steuern.</em></h1>
-            <p class="hero-description">Keine KPI-Sammlung zum Auswendiglernen. Sondern ein Werkzeug, mit dem du Kennzahlen berechnest, einordnest und daraus bessere Entscheidungen ableitest.</p>
-            <div class="hero-actions"><a class="button button-lime" href="#bibliothek">KPIs entdecken <span aria-hidden="true">↗</span></a><a class="button button-ghost" href="#zusammenhaenge">Das große Ganze verstehen <span aria-hidden="true">→</span></a></div>
+            <div class="eyebrow"><span class="accent-line"></span> DER INTERAKTIVE SALES KPI ATLAS</div>
+            <h1 id="hero-title">Kennzahlen verstehen.<br><em>Zusammenhänge erkennen.</em></h1>
+            <p class="hero-description">67 Kennzahlen mit verständlichen Definitionen, interaktiven Rechnern und nachvollziehbaren Abhängigkeiten. Finde die richtige Kennzahl für deine Vertriebsfrage.</p>
+            <div class="hero-actions"><a class="button button-lime" href="#bibliothek"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#menu_book"></use></svg> Kennzahl finden</a><a class="button button-ghost" href="#zusammenhaenge"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#account_tree"></use></svg> Zusammenhänge erkunden</a></div>
           </div>
-          <div class="hero-panel" aria-label="Drei Kernelemente des KPI Atlas">
-            <div class="panel-heading"><span>DEIN VERTRIEBS-COCKPIT</span><span class="panel-status"><span></span> LIVE-LERNMODUS</span></div>
-            <div class="panel-graphic" aria-hidden="true">
-              <span class="graphic-label graphic-label-top">INPUT</span>
-              <span class="graph-bar g1"></span><span class="graph-bar g2"></span><span class="graph-bar g3"></span><span class="graph-bar g4"></span><span class="graph-bar g5"></span><span class="graph-bar g6"></span><span class="graph-bar g7"></span>
-              <svg class="graphic-line" viewBox="0 0 350 120" preserveAspectRatio="none"><path d="M0 100 C35 93 60 108 87 78 S145 105 175 58 S227 86 262 35 S310 52 350 9" fill="none" stroke="#b8e58e" stroke-width="3.5" stroke-linecap="round"/><circle cx="350" cy="9" r="6" fill="#b8e58e"/></svg>
-            </div>
-            <div class="panel-stats"><div><b id="hero-kpi-count">67</b><span>KENNZAHLEN</span></div><div><b>07</b><span>THEMENFELDER</span></div><div><b>100%</b><span>NACHRECHENBAR</span></div></div>
+          <div class="hero-panel hero-guidance" aria-label="Drei Wege durch den KPI Atlas">
+            <div class="panel-heading"><span>IN 3 SCHRITTEN ZUR ANTWORT</span><span><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#insights"></use></svg> Orientierung</span></div>
+            <ol class="hero-guide-list">
+              <li><span class="step-indicator">01</span><div><strong>Frage auswählen</strong><small>Wo liegt das Problem?</small></div></li>
+              <li><span class="step-indicator">02</span><div><strong>Zusammenhang prüfen</strong><small>Welche KPIs beeinflussen sich?</small></div></li>
+              <li><span class="step-indicator">03</span><div><strong>Mit Zahlen rechnen</strong><small>Annahmen testen, Grenzen verstehen.</small></div></li>
+            </ol>
+            <div class="panel-stats"><div><b id="hero-kpi-count">67</b><span>KENNZAHLEN</span></div><div><b>7</b><span>THEMEN</span></div><div><b>41</b><span>BEGRIFFE</span></div></div>
+            <p class="hero-honesty">Beispieldaten statt Live-CRM-Daten. Kein automatischer Forecast.</p>
           </div>
           <div class="hero-footer"><span><i></i> Von Junior Sales bis CSO</span><span><i></i> Mit Formeln & Beispielen</span><span><i></i> Kostenlos & ohne Anmeldung</span></div>
         </section>
+
+        <section class="intent-section" id="einstieg" aria-labelledby="intent-title">
+          <div class="intent-heading"><div><span class="overline">DEIN ANLIEGEN</span><h2 id="intent-title">Womit möchtest du starten?</h2></div><p>Wähle einen Einstieg – alle Bereiche bleiben jederzeit erreichbar.</p></div>
+          <div class="intent-grid">
+            <a class="intent-card" href="#zusammenhaenge"><span class="intent-icon"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#account_tree"></use></svg></span><span class="intent-meta">ORIENTIEREN</span><strong>Ich will Zusammenhänge verstehen</strong><span>Welche KPIs stehen in Beziehung und worauf sollte ich achten?</span><span class="intent-action">Wirkungsmodell öffnen <svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#arrow_forward"></use></svg></span></a>
+            <a class="intent-card" href="#kernbeispiel"><span class="intent-icon"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#calculate"></use></svg></span><span class="intent-meta">PLANEN</span><strong>Ich will mein Ziel durchrechnen</strong><span>Ist meine Pipeline ausreichend und welchen Faktor benötige ich?</span><span class="intent-action">Rechner öffnen <svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#arrow_forward"></use></svg></span></a>
+            <a class="intent-card" href="#bibliothek"><span class="intent-icon"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#menu_book"></use></svg></span><span class="intent-meta">NACHSCHLAGEN</span><strong>Ich suche eine bestimmte Kennzahl</strong><span>Definition, Formel, Beispiel, Benchmark und typische Fehler.</span><span class="intent-action">KPIs durchsuchen <svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#arrow_forward"></use></svg></span></a>
+          </div>
+        </section>
+
 
         <section class="section pad-section" id="kernbeispiel" aria-labelledby="coverage-title">
           <div class="section-heading"><div><span class="overline">01 / ZUM EINSTIEG</span><h2 id="coverage-title">Die aktuelle Pipeline Coverage berechnen.</h2><p>Hier siehst du zunächst das Verhältnis aus offener Pipeline und Restziel. Ob diese Menge ausreicht, prüfst du direkt darunter mit dem Bedarfsrechner.</p></div><span class="section-index">01 — 04</span></div>
@@ -208,24 +228,35 @@
         </section>
 
         <section class="section pad-section relationship-section" id="zusammenhaenge" aria-labelledby="relationships-title">
-          <div class="section-heading"><div><span class="overline">02 / DAS SYSTEM VERSTEHEN</span><h2 id="relationships-title">Keine Kennzahl arbeitet allein.</h2><p>Ein guter Vertriebsprozess ist eine Wirkungskette. Klicke auf einen Hebel, um seine Berechnung zu öffnen.</p></div><span class="section-index">02 — 04</span></div>
-          <div class="system-grid" role="group" aria-label="Verknüpfte KPI-Wirkungskette">
-            <button type="button" data-jump="lead-conversion" class="system-node"><span class="node-no">01 / INPUT</span><b>Akquise</b><small>Lead → SQL → Opportunity</small><span class="node-example">Conversion Rate <span>↗</span></span></button>
-            <div class="system-arrow" aria-hidden="true">→</div>
-            <button type="button" data-jump="pipeline-coverage" class="system-node"><span class="node-no">02 / POTENZIAL</span><b>Pipeline</b><small>Volumen × Dealqualität</small><span class="node-example">Pipeline Coverage <span>↗</span></span></button>
-            <div class="system-arrow" aria-hidden="true">→</div>
-            <button type="button" data-jump="win-rate" class="system-node"><span class="node-no">03 / KONVERSION</span><b>Abschluss</b><small>Win Rate × Dealgröße</small><span class="node-example">Sales Velocity <span>↗</span></span></button>
-            <div class="system-arrow" aria-hidden="true">→</div>
-            <button type="button" data-jump="nrr" class="system-node"><span class="node-no">04 / WERT</span><b>Wachstum</b><small>New ARR + Retention</small><span class="node-example">NRR & CAC <span>↗</span></span></button>
+          <div class="section-heading"><div><span class="overline">02 / DAS SYSTEM VERSTEHEN</span><h2 id="relationships-title">Keine Kennzahl arbeitet allein.</h2><p>Vertriebserfolg entsteht aus verbundenen Teilprozessen. Wähle eine Station, sieh die relevanten Kennzahlen und springe direkt zum Rechner.</p></div><span class="section-index">02 — 04</span></div>
+          <div class="map-heading-line">
+            <p>Wähle eine Station der Vertriebsreise. Die zugehörigen Kennzahlen, erklärten Verbindungen und passenden Rechner erscheinen direkt darunter.</p>
+            <span class="map-legend"><span class="map-legend-dot"></span> Zusammenhang, keine garantierte Ursache</span>
           </div>
-          <div class="insight-strip"><span class="insight-icon">!</span><p><b>Ein häufiger Denkfehler:</b> Mehr Leads lösen kein Win-Rate-Problem. Mehr Pipeline ersetzt keinen belastbaren Forecast. Und hoher Umsatz ist ohne Marge kein Beweis für Profitabilität.</p></div>
-          <div class="lever-grid">
-            <div class="lever"><span>HEBEL 01</span><b>Mehr qualifizierte Opportunities</b><p>Mehr Chancen im relevanten Zeitfenster.</p></div>
-            <div class="lever"><span>HEBEL 02</span><b>Höhere Win Rate</b><p>Größerer Anteil tatsächlich gewonnener Deals.</p></div>
-            <div class="lever"><span>HEBEL 03</span><b>Größerer Dealwert</b><p>Mehr Wert pro erfolgreich abgeschlossenem Deal.</p></div>
-            <div class="lever"><span>HEBEL 04</span><b>Kürzerer Sales Cycle</b><p>Schnellerer Wertdurchsatz bei sonst gleichen Annahmen.</p></div>
+          <div class="kpi-map-wrap">
+            <div class="kpi-map" role="group" aria-label="Interaktives Vertriebs-Wirkungsmodell mit sechs Stationen">
+              <svg class="kpi-map-edges" viewBox="0 0 900 362" preserveAspectRatio="none" aria-hidden="true">
+                <defs><marker id="map-arrow" orient="auto" markerWidth="8" markerHeight="8" refX="7" refY="4"><path d="M0 0 L8 4 L0 8" fill="none" stroke="currentColor" stroke-width="1.5"/></marker></defs>
+                <path d="M260 82 H345" marker-end="url(#map-arrow)"/>
+                <path d="M554 82 H639" marker-end="url(#map-arrow)"/>
+                <path d="M745 131 V222" marker-end="url(#map-arrow)"/>
+                <path d="M638 288 H555" marker-end="url(#map-arrow)"/>
+                <path d="M345 288 H261" marker-end="url(#map-arrow)"/>
+                <path d="M451 131 V221" marker-end="url(#map-arrow)"/>
+              </svg>
+              <button type="button" class="map-node is-selected" data-map-node="akquise" aria-pressed="true"><span class="map-node-top"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#groups"></use></svg> 01 / ANFANG</span><strong>Akquise</strong><small>Neue Kontakte zu Chancen qualifizieren</small></button>
+              <button type="button" class="map-node" data-map-node="pipeline" aria-pressed="false"><span class="map-node-top"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#account_tree"></use></svg> 02 / POTENZIAL</span><strong>Pipeline</strong><small>Volumen, Qualität und Zeitfenster</small></button>
+              <button type="button" class="map-node" data-map-node="abschluss" aria-pressed="false"><span class="map-node-top"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#trending_up"></use></svg> 03 / ERGEBNIS</span><strong>Abschluss</strong><small>Gewinne, Dealwert und Zielerreichung</small></button>
+              <button type="button" class="map-node" data-map-node="effizienz" aria-pressed="false"><span class="map-node-top"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#analytics"></use></svg> 06 / ERTRAG</span><strong>Effizienz</strong><small>Kosten, Marge und Produktivität</small></button>
+              <button type="button" class="map-node" data-map-node="bestand" aria-pressed="false"><span class="map-node-top"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#hub"></use></svg> 05 / BESTAND</span><strong>Kundenbindung</strong><small>Retention, Expansion und Churn</small></button>
+              <button type="button" class="map-node" data-map-node="forecast" aria-pressed="false"><span class="map-node-top"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#query_stats"></use></svg> 04 / KONTROLLE</span><strong>Forecast</strong><small>Treffsicherheit und Verschiebungen</small></button>
+            </div>
           </div>
-          <p class="equation-line">SALES VELOCITY <span>=</span> Opportunities <span>×</span> Win Rate <span>×</span> Ø Dealwert <span>÷</span> Zyklusdauer</p>
+          <div class="map-detail" id="map-detail" aria-labelledby="map-detail-title">
+            <div class="map-detail-copy"><span id="map-detail-kicker" class="overline">01 / AKQUISE</span><h3 id="map-detail-title">Akquise</h3><p id="map-detail-description">Wie werden aus Kontakten echte Verkaufschancen?</p><p id="map-detail-caution" class="map-caution"></p></div>
+            <div class="map-detail-kpis"><span class="detail-label">ZUGEHÖRIGE KENNZAHLEN – ZUM RECHNER</span><div id="map-detail-links" class="map-kpi-links"></div></div>
+          </div>
+          <p class="map-method-note"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#insights"></use></svg> Dieses Modell zeigt fachliche Zusammenhänge, keine addierbare Gesamtformel oder statistisch bewiesene Kausalität. Eine steigende Kennzahl verbessert nicht automatisch alle nachfolgenden Werte.</p>
         </section>
 
         <section class="section pad-section" id="rueckwaerts" aria-labelledby="reverse-title">
@@ -250,11 +281,11 @@
         <section class="section pad-section library-section" id="bibliothek" aria-labelledby="library-title">
           <div class="section-heading"><div><span class="overline">04 / WISSEN NACH BEDARF</span><h2 id="library-title">Die KPI-Bibliothek.</h2><p>Definition, Formel, Beispiel, Einordnung und konkrete nächste Schritte. Aufklappen, Werte ändern, verstehen.</p></div><span class="section-index">04 — 04</span></div>
           <div class="library-tools">
-            <label class="search-field" for="kpi-search"><span aria-hidden="true">⌕</span><span class="sr-only">Kennzahl suchen</span><input id="kpi-search" type="search" autocomplete="off" placeholder="Kennzahl, Formel oder Begriff suchen …"><kbd>/</kbd></label>
-            <div class="view-hint">Filter & Durchsuchen <span>↓</span></div>
+            <label class="search-field" for="kpi-search"><svg class="ms-icon" aria-hidden="true"><use href="./material-icons.svg#search"></use></svg><span class="sr-only">Kennzahl suchen</span><input id="kpi-search" type="search" autocomplete="off" placeholder="Kennzahl, Formel oder Begriff suchen …"><kbd>/</kbd></label>
+            <div class="view-hint">Tipp: Mit / direkt in die Suche springen</div>
           </div>
           <div class="filter-scroll"><div id="category-filters" class="filter-list" aria-label="KPIs filtern"></div></div>
-          <div class="result-line"><p id="result-count" role="status" aria-live="polite">Kennzahlen werden geladen …</p><button id="reset-filters" class="text-button" type="button">Filter zurücksetzen ↺</button></div>
+          <div class="result-line"><p id="result-count" role="status" aria-live="polite">Kennzahlen werden geladen …</p><button id="reset-filters" class="text-button" type="button">Filter zurücksetzen</button></div>
           <div id="kpi-grid" class="kpi-grid" aria-label="KPI-Karten"></div>
           <div class="empty-state" id="empty-state" hidden><strong>Keine passenden Kennzahlen.</strong><p>Anderen Suchbegriff nutzen oder Filter zurücksetzen.</p><button type="button" id="empty-reset" class="button button-dark">Alle KPIs anzeigen</button></div>
         </section>

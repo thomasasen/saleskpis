@@ -87,6 +87,60 @@
               <p class="micro-note">3× ist eine verbreitete Faustregel, kein Gesetz. <a href="#coverage-stresstest">Hier erkennst du, warum 3× trotzdem zu wenig sein kann ↗</a></p>
             </div>
           </div>
+
+          <div class="required-coverage" id="coverage-benoetigt" aria-labelledby="required-coverage-title">
+            <div class="required-heading">
+              <div><span class="overline">NÄCHSTER SCHRITT / DEINE EIGENE ZIEL-COVERAGE</span>
+                <h3 id="required-coverage-title">Welche Pipeline Coverage brauchen wir wirklich?</h3>
+                <p>Die 3×-Faustregel reicht nicht. Trage ein, wie erfolgreich und wie pünktlich ihr normalerweise abschließt. Der Rechner verwendet das <strong>Restziel und die offene Pipeline aus dem Formular darüber</strong>.</p>
+              </div>
+              <a href="#begriff-in-period-yield" data-glossary="in-period-yield" class="required-glossary">Begriffe verstehen ↗</a>
+            </div>
+            <div class="required-grid">
+              <form id="required-coverage-form" class="required-input-panel" autocomplete="off">
+                <fieldset class="required-methods">
+                  <legend>1. Auf welcher Datengrundlage rechnen wir?</legend>
+                  <label><input type="radio" name="required-method" value="split" checked>
+                    <span><strong>Win Rate und Fristquote</strong><small>Gut zum Einstieg und für Was-wäre-wenn-Rechnungen</small></span></label>
+                  <label><input type="radio" name="required-method" value="yield">
+                    <span><strong>Historischer Pipeline Yield</strong><small>Bevorzugt, wenn ihr vergleichbare CRM-Stichtagsdaten habt</small></span></label>
+                </fieldset>
+                <div id="required-split-fields" class="required-method-fields">
+                  <div class="required-two-inputs">
+                    <label for="required-win-rate"><strong>Wertgewichtete Win Rate (%)</strong>
+                      <small>Von 100 € entschiedenen Dealwerts: Wie viel wird gewonnen?</small>
+                      <input id="required-win-rate" name="win-rate" type="number" min="0" max="100" step="0.1" inputmode="decimal" value="30"></label>
+                    <label for="required-on-time"><strong>Fristquote der Gewinne (%)</strong>
+                      <small>Von 100 € gewonnenem Wert: Wie viel davon kommt rechtzeitig?</small>
+                      <input id="required-on-time" name="on-time" type="number" min="0" max="100" step="0.1" inputmode="decimal" value="80"></label>
+                  </div>
+                  <div class="required-definition"><b>Einfach erklärt:</b> 30 % Win Rate heißt, aus 100 € entschiedener Pipeline werden 30 € gewonnen. Kommen davon 80 % noch im Zielzeitraum, bleiben 24 € rechtzeitiger Gewinnwert übrig.</div>
+                </div>
+                <div id="required-yield-fields" class="required-method-fields" hidden>
+                  <label for="required-yield"><strong>Historischer In-Period Pipeline Yield (%)</strong>
+                    <small>Von 100 € offener Pipeline am Anfang vergleichbarer Quartale: Wie viel wurde jeweils bis zum Quartalsende gewonnen?</small>
+                    <input id="required-yield" name="yield" type="number" min="0" max="100" step="0.1" inputmode="decimal" value="24"></label>
+                  <div class="required-definition"><b>Einfach erklärt:</b> Wenn aus 450.000 € einer eingefrorenen Start-Pipeline bis Quartalsende 108.000 € gewonnen werden, ist der Yield 24 %. Gewinne späterer Quartale zählen hier nicht.</div>
+                </div>
+                <button type="button" id="required-reset" class="text-button">Beispielwerte wiederherstellen ↺</button>
+              </form>
+              <div class="required-result-panel">
+                <span class="detail-label">2. FORMEL MIT DEINEN WERTEN</span>
+                <div class="required-formula" id="required-formula">10.000 ÷ (30 × 80) = 4,17×</div>
+                <p id="required-explanation" class="required-explanation">Von 100 € Pipeline werden rechnerisch 24 € rechtzeitig gewonnen. Deshalb braucht ihr rund 4,17 € Pipeline für jeden Euro Restziel.</p>
+                <div class="required-comparison">
+                  <div><span>Benötigte Coverage</span><strong id="required-coverage-value" aria-live="polite">4,17×</strong></div>
+                  <div><span>Vorhandene Coverage</span><strong id="required-current-value">3,00×</strong></div>
+                </div>
+                <div class="required-comparison required-comparison-secondary">
+                  <div><span>Erforderliche offene Pipeline</span><strong id="required-pipeline-value">625.000 €</strong></div>
+                  <div><span>Zusätzlich nötige Pipeline</span><strong id="required-gap-value">175.000 €</strong></div>
+                </div>
+                <p class="required-status" id="required-status" role="status" aria-live="polite">Die vorhandene Pipeline liegt unter dem rechnerisch benötigten Wert.</p>
+              </div>
+            </div>
+            <p class="required-footnote"><strong>Wichtig:</strong> Das Ergebnis ist eine Erwartungswertrechnung, keine Abschlussgarantie. Beide Quoten müssen wertbasiert sein und zur heutigen Dealstruktur sowie zum Zielzeitraum passen. Der durchschnittliche Sales Cycle, Vertriebsphasen und einzelne Großdeals beeinflussen die tatsächliche Erreichbarkeit; <a href="#coverage-stresstest">diese Risiken prüfst du im Stresstest ↗</a>.</p>
+          </div>
         </section>
 
 

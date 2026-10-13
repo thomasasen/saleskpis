@@ -1,6 +1,6 @@
 import {dependencies} from './dependencies.js';
 import {glossary,glossaryById} from './glossary.js';
-import {diagnoseCoverage} from './coverage-model.js';
+import {diagnoseCoverage,calculateRequiredCoverage} from './coverage-model.js';
 import {categories,kpis,kpiById,sources,evaluate} from './kpis.js';
 
 const $=selector=>document.querySelector(selector);
@@ -220,6 +220,68 @@ function coverage(){
   'Du brauchst rechnerisch mindestens '+nf(required,1)+' % wertgewichtete Abschlussquote für das verbleibende Ziel.';
 }
 
+
+function renderRequiredCoverage(){
+ const form=$('#required-coverage-form');
+ const method=form.querySelector('input[name="required-method"]:checked')?.value||'split';
+ const split=$('#required-split-fields'),yieldFields=$('#required-yield-fields');
+ split.hidden=method!=='split';
+ yieldFields.hidden=method!=='yield';
+ // Werte aus dem direkt darüber stehenden Rechner werden mitverwendet.
+ const inputValue=id=>{
+  const raw=$('#'+id).value.trim();
+  return raw===''?NaN:Number(raw);
+ };
+ const pipeline=inputValue('coverage-pipeline'),goal=inputValue('coverage-target');
+ const winRate=inputValue('required-win-rate'),onTimeRate=inputValue('required-on-time');
+ const inPeriodYield=inputValue('required-yield');
+ const result=calculateRequiredCoverage({pipeline,goal,method,winRate,onTimeRate,inPeriodYield});
+ const required=$('#required-coverage-value'),current=$('#required-current-value');
+ const requiredPipeline=$('#required-pipeline-value'),gap=$('#required-gap-value');
+ const formula=$('#required-formula'),explanation=$('#required-explanation');
+ const status=$('#required-status');
+ const shown=(n,unit)=>n===null||!Number.isFinite(n)?'—':(unit==='×'?nf(n,2)+'×':nf0(n)+' €');
+ required.textContent=shown(result.requiredCoverage,'×');
+ current.textContent=shown(result.currentCoverage,'×');
+ requiredPipeline.textContent=shown(result.requiredPipeline,'€');
+ gap.textContent=shown(result.additionalPipeline,'€');
+ status.classList.remove('is-sufficient','is-shortfall');
+ const effective=result.effectiveRatePercent;
+ if(result.error==='invalid'){
+  formula.textContent='Bitte die Eingaben prüfen.';
+  explanation.textContent='Eingaben dürfen nicht leer oder negativ sein. Prozentwerte müssen zwischen 0 und 100 liegen.';
+  status.textContent='Eine Berechnung ist mit diesen Eingaben nicht möglich.';
+  return;
+ }
+ if(method==='split'){
+  const lhs='10.000 ÷ ('+nf(winRate,1)+' × '+nf(onTimeRate,1)+')';
+  formula.textContent=lhs+' = '+(result.requiredCoverage===null?'nicht berechenbar':nf(result.requiredCoverage,2)+'×');
+  explanation.textContent='Von 100 € vergleichbarem Dealwert werden '+nf(winRate,1)+' € gewonnen. Davon kommen '+
+   nf(onTimeRate,1)+' % rechtzeitig: Das entspricht '+nf(effective,1)+' € fristgerechtem Gewinnwert pro 100 € Pipeline.';
+ }else{
+  formula.textContent='100 ÷ '+nf(inPeriodYield,1)+' = '+
+   (result.requiredCoverage===null?'nicht berechenbar':nf(result.requiredCoverage,2)+'×');
+  explanation.textContent='Von 100 € offener Start-Pipeline habt ihr historisch '+
+   nf(effective,1)+' € noch im Zielzeitraum gewonnen. Darauf basiert der benötigte Faktor.';
+ }
+ if(result.error==='target-reached'){
+  status.textContent='Das Restziel beträgt 0 €. Ihr braucht keine zusätzliche Pipeline; eine Coverage ist dann nicht definiert.';
+  return;
+ }
+ if(result.error==='zero-yield'){
+  status.textContent='Bei 0 % fristgerechtem Gewinnanteil reicht kein endlicher Pipelinewert. Prüft zuerst die Annahmen und den Verkaufsprozess.';
+  return;
+ }
+ if(result.additionalPipeline>0.005){
+  status.classList.add('is-shortfall');
+  status.textContent='Die bestehende Pipeline liegt rechnerisch um '+
+   nf0(result.additionalPipeline)+' € unter dem benötigten Volumen. Das ist eine Planungslücke, kein sicherer Fehlbetrag.';
+ }else{
+  status.classList.add('is-sufficient');
+  status.textContent='Die bestehende Pipeline erreicht die berechnete Mindestdeckung. Ein Sicherheitspuffer und die Qualität einzelner Deals sind trotzdem wichtig.';
+ }
+}
+
 const stressDefaults={
  pipeline:450000,goal:150000,winRate:30,onTimeRate:80,
  averageDeal:75000,largestDeal:175000,averageCycle:120,daysLeft:60
@@ -291,7 +353,7 @@ function initTheme(){
 }
 function init(){
  $('#hero-kpi-count').textContent=kpis.length;
- renderNav();renderGrid();renderSources();renderGlossary();initTheme();coverage();reverse();renderCoverageStress();
+ renderNav();renderGrid();renderSources();renderGlossary();initTheme();coverage();renderRequiredCoverage();reverse();renderCoverageStress();
  // Linkziel beim Teilen immer aus der tatsächlich geöffneten Seite ableiten.
  $('#mail-link').href='mailto:?subject='+encodeURIComponent('Sales KPI Atlas – Vertriebskennzahlen verstehen')+'&body='+encodeURIComponent('Ein praxisnahes Nachschlagewerk mit KPI-Rechnern:\n'+location.origin+location.pathname);
  els.filters.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b)selectFilter(b.dataset.filter,false)});
@@ -319,7 +381,17 @@ function init(){
   const j=e.target.closest('[data-jump], [data-open-kpi]');
   if(j&&!els.grid.contains(j)){e.preventDefault();jumpToKpi(j.dataset.jump||j.dataset.openKpi);}
  });
- ['coverage-pipeline','coverage-target'].forEach(id=>$('#'+id).addEventListener('input',coverage));
+ ['coverage-pipeline','coverage-target'].forEach(id=>$('#'+id).addEventListener('input',()=>{coverage();renderRequiredCoverage()}));
+ $('#required-coverage-form').addEventListener('input',renderRequiredCoverage);
+ $('#required-coverage-form').addEventListener('change',renderRequiredCoverage);
+ $('#required-coverage-form').addEventListener('submit',e=>e.preventDefault());
+ $('#required-reset').addEventListener('click',()=>{
+   $('#required-win-rate').value='30';
+   $('#required-on-time').value='80';
+   $('#required-yield').value='24';
+   $('#required-coverage-form').querySelector('input[value="split"][name="required-method"]').checked=true;
+   renderRequiredCoverage();
+ });
  $('#glossary-search').addEventListener('input',renderGlossary);
  $('#coverage-lab-form').addEventListener('input',renderCoverageStress);
  $('#coverage-lab-form').addEventListener('submit',e=>e.preventDefault());

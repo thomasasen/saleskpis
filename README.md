@@ -2,14 +2,17 @@
 
 **Freies Nachschlagewerk für die Vertriebssteuerung in B2B-Softwareunternehmen und Unternehmensberatungen.**
 
-66 Kennzahlen in sieben Themengebieten. Jede KPI bietet Definition, Formel, Beispiel, Live-Rechner, Orientierung, Managementempfehlung, typische Fehler und inhaltliche Verknüpfungen.
+67 Kennzahlen in sieben Themengebieten. Jede KPI bietet Definition, Formel, Beispiel, Live-Rechner, Orientierung, Managementempfehlung, typische Fehler und inhaltliche Verknüpfungen.
 
 ## Funktionen
 
 - Interaktives Beispiel für Pipeline Coverage mit frei änderbaren Werten.
 - Rückwärtsplanung von Restziel über wertgewichtete Abschlussquote zum benötigten Pipelinewert und zur Opportunity-Anzahl.
-- 66 durchsuchbare KPI-Karten mit eigenen Rechnern und Querverweisen.
+- 67 durchsuchbare KPI-Karten mit eigenen Rechnern und Querverweisen.
 - Grafische Wirkungskette Akquise → Pipeline → Abschluss → Wachstum.
+- **Coverage-Stresstest** mit wertgewichteter Win Rate, fristgerechtem Gewinnanteil, Dealgröße, Konzentrationsrisiko und Sales Cycle als Plausibilitätscheck.
+- **41 deutsch erklärte Fachbegriffe** mit Beispielen, Denkfehlern und Links zu passenden Rechnern.
+- **Gerichtete KPI-Abhängigkeiten** für wichtige Kennzahlen: direkt, indirekt, zeitlich oder risikobezogen.
 - Tastaturkürzel / für Suche, Deep Links auf einzelne KPIs, Dark Mode und responsive Druckansicht.
 - Kein Tracking, Login, Backend, externes Framework oder kostenpflichtige API.
 - Der Button „Per E-Mail teilen“ öffnet das Mailprogramm. Er versendet nichts automatisch.
@@ -37,8 +40,12 @@ Die JavaScript-Module benötigen HTTP, nicht das Protokoll file://.
 | --- | --- |
 | `index.html` | Semantische Landingpage und Lernstruktur |
 | `styles.css` | Responsive Design, Farbmodi, Druckansicht |
-| `kpis.js` | 66 Kennzahlen, Rechenfunktionen, Quellen |
-| `app.js` | Suche, Navigation, Rechner und Interaktionen |
+| `kpis.js` | 67 Kennzahlen, Rechenfunktionen, Quellen |
+| `app.js` | Suche, Glossar, Navigation, Rechner und Interaktionen |
+| `coverage-model.js` | Parametrisierter Coverage-Stresstest ohne Scheingenauigkeit |
+| `glossary.js` | 41 Fachbegriffe mit deutscher Erläuterung |
+| `dependencies.js` | Erklärte Zusammenhänge wichtiger Kennzahlen |
+| `docs/RED_TEAM_AUDIT.md` | Befunde, Modelleinschränkungen und offene Risiken |
 | `tests/kpis.test.mjs` | Berechnungs- und Datenintegritätstests |
 | `.github/workflows/quality.yml` | GitHub Actions CI bei Push und PR |
 
@@ -52,6 +59,8 @@ Die JavaScript-Module benötigen HTTP, nicht das Protokoll file://.
 6. Bei SaaS-Kennzahlen Bruttomarge, Periodenbezug und Sales-Cycle-Versatz beachten.
 7. Neue Kennzahlen mit konsistentem Zahlenbeispiel, Aktion, Datenwarnung und automatisiertem Test ergänzen.
 
+8. Für Pipelineplanung eine zu Periodenbeginn eingefrorene Kohorte und deren **In-Period Pipeline Yield** bevorzugen, wenn verfügbar. Für ein zeitgerechtes Szenario Win Rate und bedingten fristgerechten Anteil begründet ansetzen; nie den Durchschnitts-Sales-Cycle direkt in eine Abschlusswahrscheinlichkeit umrechnen.
+
 ## Weiterführende Quellen
 
 - SaaS Capital (2025), Retention Benchmarks: https://www.saas-capital.com/blog-posts/what-is-a-good-retention-rate-for-a-private-saas-company/
@@ -61,7 +70,7 @@ Die JavaScript-Module benötigen HTTP, nicht das Protokoll file://.
 - Managed Outbound (2026), Pipeline Coverage: https://www.managedoutbound.com/resources/pipeline-coverage-formula
 - W3C, WCAG 2.2: https://www.w3.org/TR/WCAG22/
 
-**Stand:** 13. Oktober 2026. Alle Kalkulationsbeispiele sind fiktiv. Branchenwerte nur im Kontext ihrer jeweiligen Stichprobe und Berechnung lesen.
+**Stand:** 13. Oktober 2026; Red-Team-Prüfung und methodische Nachschärfung dokumentiert. Alle Kalkulationsbeispiele sind fiktiv. Branchenwerte nur im Kontext ihrer jeweiligen Stichprobe und Berechnung lesen.
 
 ## Lizenz
 

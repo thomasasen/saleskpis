@@ -320,3 +320,5 @@ body.dark .filter-button.active span{color:#203e2e}
 body.dark .system-node small,body.dark .lever p{color:#c7dae1}
 body.dark .stress-headlines small{color:#cee7d7}
 body.dark .lever>span,body.dark .reverse-step>span{color:#bce4c9}
+
+body.dark .reverse-controls label{color:#d4e7da}

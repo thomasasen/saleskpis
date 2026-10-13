@@ -1,0 +1,28 @@
+name: Remove merged KPI guidance branch
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/cleanup-kpi-guidance-branch-once.yml
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    if: github.repository == 'thomasasen/saleskpis'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Delete merged KPI guidance branch with strict head guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          branch='feat/kpi-interpretation-playbook-20261013'
+          expected='bbcc8ee5479d74af152e8f0d01d2acdfc6c17303'
+          merged="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/7" --jq '.merged_at')"
+          test -n "$merged" && test "$merged" != 'null'
+          head="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${branch}" --jq '.object.sha')"
+          test "$head" = "$expected"
+          gh api --silent -X DELETE "repos/${GITHUB_REPOSITORY}/git/refs/heads/${branch}"
+          gh api "repos/${GITHUB_REPOSITORY}/branches?per_page=100" --jq '.[].name'

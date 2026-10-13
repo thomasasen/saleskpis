@@ -111,15 +111,18 @@ function renderGlossary(){
   '</div></details>'
  ).join('');
 }
-function jumpToGlossary(id){
+function openGlossaryView(id){
  if(!glossaryById[id])return;
- const search=$('#glossary-search');search.value='';renderGlossary();
+ $('#glossary-search').value='';
+ renderGlossary();
  const entry=document.getElementById('begriff-'+id);
  if(!entry)return;
  entry.open=true;
- history.replaceState(null,'','#begriff-'+id);
- entry.scrollIntoView({behavior:motion(),block:'start'});
+ entry.scrollIntoView({behavior:'instant',block:'start'});
  entry.querySelector('summary').focus({preventScroll:true});
+}
+function jumpToGlossary(id,source){
+ if(glossaryById[id])navigateWithinAtlas('#begriff-'+id,source);
 }
 
 
@@ -189,16 +192,155 @@ function toggleCard(article,open){
  btn.firstChild.textContent=next?'Rechner & Details schließen ':'Formel, Beispiel & Rechner anzeigen ';
  if(next)updateCardResult(article);
 }
-function jumpToKpi(id){
+function openKpiView(id){
  if(!kpiById[id])return;
- state.category='all';state.query='';els.search.value='';renderGrid();
+ state.category='all';state.query='';els.search.value='';
+ renderGrid();
  const card=document.getElementById('kpi-'+id);if(!card)return;
  toggleCard(card,true);
- history.replaceState(null,'','#kpi-'+id);
- card.scrollIntoView({behavior:motion(),block:'start'});
- // Sichtbaren Tastaturfokus gewährleisten, ohne Scrollsprung.
+ card.scrollIntoView({behavior:'instant',block:'start'});
  card.querySelector('.kpi-expand').focus({preventScroll:true});
 }
+function jumpToKpi(id,source){
+ if(kpiById[id])navigateWithinAtlas('#kpi-'+id,source);
+}
+
+
+/**
+ * Navigation mit echtem Browser-Verlauf. Jeder interne Sprung speichert den
+ * Ausgangszustand, inklusive Suche, Filtern, offenen Karten und Rechnerwerten.
+ * Zurück/Vorwärts rekonstruiert diesen Zustand an der ursprünglichen Scrollposition.
+ * Absichtlich kein sessionStorage: Der Browserverlauf ist die einzige Quelle.
+ */
+let handledHash=location.hash;
+let restoringNavigation=false;
+function focusReference(element){
+ if(!element||element===document.body)return null;
+ if(element.id)return {kind:'id',value:element.id};
+ const card=element.closest('.kpi-card');
+ if(card){
+  const id=card.dataset.id;
+  if(element.matches('[data-jump]'))return {kind:'card-jump',id,value:element.dataset.jump};
+  if(element.matches('[data-glossary]'))return {kind:'card-term',id,value:element.dataset.glossary};
+  if(element.matches('.kpi-expand'))return {kind:'card-expand',id};
+ }
+ const entry=element.closest('.glossary-item');
+ if(entry){
+  if(element.matches('summary'))return {kind:'glossary-summary',id:entry.id};
+  if(element.matches('[data-jump]'))return {kind:'glossary-jump',id:entry.id,value:element.dataset.jump};
+ }
+ if(element.matches('a[href^="#"]'))return {kind:'anchor',value:element.getAttribute('href')};
+ return null;
+}
+function resolveFocus(ref){
+ if(!ref)return null;
+ if(ref.kind==='id')return document.getElementById(ref.value);
+ if(ref.kind==='anchor')return [...document.querySelectorAll('a[href^="#"]')]
+  .find(el=>el.getAttribute('href')===ref.value);
+ if(ref.kind.startsWith('card-')){
+  const card=document.getElementById('kpi-'+ref.id);
+  if(!card)return null;
+  if(ref.kind==='card-expand')return card.querySelector('.kpi-expand');
+  const attr=ref.kind==='card-jump'?'jump':'glossary';
+  return [...card.querySelectorAll('[data-'+attr+']')].find(el=>el.dataset[attr]===ref.value);
+ }
+ const entry=document.getElementById(ref.id);
+ if(!entry)return null;
+ if(ref.kind==='glossary-summary')return entry.querySelector('summary');
+ if(ref.kind==='glossary-jump')return [...entry.querySelectorAll('[data-jump]')]
+  .find(el=>el.dataset.jump===ref.value);
+ return null;
+}
+function captureView(source){
+ return {
+  category:state.category,
+  query:state.query,
+  glossaryQuery:$('#glossary-search').value,
+  openCards:[...els.grid.querySelectorAll('.kpi-card.open')].map(card=>({
+   id:card.dataset.id,
+   values:[...card.querySelectorAll('.calc-input')].map(input=>input.value)
+  })),
+  openGlossary:[...document.querySelectorAll('#glossary-grid .glossary-item[open]')].map(el=>el.id),
+  y:window.scrollY,
+  focus:focusReference(source||document.activeElement)
+ };
+}
+function saveCurrentView(source){
+ const current=history.state?.atlasView;
+ if(!current||restoringNavigation)return;
+ history.replaceState({
+  ...history.state,
+  atlasView:{...current,snapshot:captureView(source)}
+ },'',location.href);
+}
+function updateBackButton(){
+ const depth=history.state?.atlasView?.depth||0;
+ $('#jump-return').hidden=depth<1;
+}
+function restoreView(snapshot){
+ if(!snapshot){renderHashView(location.hash);return;}
+ restoringNavigation=true;
+ state.category=snapshot.category||'featured';
+ state.query=snapshot.query||'';
+ els.search.value=state.query;
+ renderGrid();
+ for(const saved of snapshot.openCards||[]){
+  const card=document.getElementById('kpi-'+saved.id);
+  if(!card)continue;
+  toggleCard(card,true);
+  card.querySelectorAll('.calc-input').forEach((input,i)=>{
+   if(saved.values[i]!==undefined)input.value=saved.values[i];
+  });
+  updateCardResult(card);
+ }
+ $('#glossary-search').value=snapshot.glossaryQuery||'';
+ renderGlossary();
+ for(const id of snapshot.openGlossary||[]){
+  const entry=document.getElementById(id);if(entry)entry.open=true;
+ }
+ // Nach dem Wiederaufbau der DOM-Elemente scrollen und den Ausgangsfokus setzen.
+ requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  window.scrollTo({top:Math.max(0,snapshot.y||0),behavior:'instant'});
+  const target=resolveFocus(snapshot.focus);
+  if(target&&target.getClientRects().length)target.focus({preventScroll:true});
+  restoringNavigation=false;
+ }));
+}
+function renderHashView(hash){
+ let id;
+ try{id=decodeURIComponent(hash.replace(/^#/,''))}catch{return;}
+ if(id.startsWith('kpi-')&&kpiById[id.slice(4)]){
+  openKpiView(id.slice(4));
+ }else if(id.startsWith('begriff-')&&glossaryById[id.slice(8)]){
+  openGlossaryView(id.slice(8));
+ }else if(id){
+  const target=document.getElementById(id);
+  if(target)target.scrollIntoView({behavior:'instant',block:'start'});
+ }
+}
+function navigateWithinAtlas(hash,source,afterNavigation){
+ const prior=history.state?.atlasView;
+ const depth=prior?.depth||0;
+ // Vor dem Sprung den Zustand des Ausgangsorts in dessen History-Eintrag sichern.
+ if(prior)saveCurrentView(source);
+ else history.replaceState({atlasView:{depth:0,snapshot:captureView(source)}},'',location.href);
+ history.pushState({atlasView:{depth:depth+1,snapshot:null}},'',hash);
+ if(afterNavigation)afterNavigation();
+ renderHashView(hash);
+ handledHash=location.hash;
+ saveCurrentView();
+ updateBackButton();
+}
+function goBackToSource(){
+ if((history.state?.atlasView?.depth||0)>0)history.back();
+}
+function restoreFromHistory(event){
+ handledHash=location.hash;
+ if(event.state?.atlasView?.snapshot)restoreView(event.state.atlasView.snapshot);
+ else renderHashView(location.hash);
+ updateBackButton();
+}
+
 let toastTimer;
 function showToast(message){
  const el=els.toast;el.textContent=message;el.classList.add('visible');
@@ -368,30 +510,39 @@ function init(){
  renderNav();renderGrid();renderSources();renderGlossary();initTheme();coverage();renderRequiredCoverage();reverse();renderCoverageStress();
  // Linkziel beim Teilen immer aus der tatsächlich geöffneten Seite ableiten.
  $('#mail-link').href='mailto:?subject='+encodeURIComponent('Sales KPI Atlas – Vertriebskennzahlen verstehen')+'&body='+encodeURIComponent('Ein praxisnahes Nachschlagewerk mit KPI-Rechnern:\n'+location.origin+location.pathname);
- els.filters.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b)selectFilter(b.dataset.filter,false)});
- els.nav.addEventListener('click',e=>{const a=e.target.closest('[data-filter]');if(a){e.preventDefault();selectFilter(a.dataset.filter,true)}});
- els.search.addEventListener('input',e=>{state.query=e.target.value;if(state.query)state.category='all';renderGrid()});
- $('#reset-filters').addEventListener('click',()=>selectFilter('featured',false));
- $('#empty-reset').addEventListener('click',()=>selectFilter('all',false));
+ els.filters.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b){selectFilter(b.dataset.filter,false);saveCurrentView()}});
+ els.nav.addEventListener('click',e=>{const a=e.target.closest('[data-filter]');if(a){e.preventDefault();navigateWithinAtlas('#bibliothek',a,()=>selectFilter(a.dataset.filter,false))}});
+ els.search.addEventListener('input',e=>{state.query=e.target.value;if(state.query)state.category='all';renderGrid();saveCurrentView()});
+ $('#reset-filters').addEventListener('click',()=>{selectFilter('featured',false);saveCurrentView()});
+ $('#empty-reset').addEventListener('click',()=>{selectFilter('all',false);saveCurrentView()});
  els.grid.addEventListener('click',e=>{
   const jump=e.target.closest('[data-jump]');
-  if(jump){jumpToKpi(jump.dataset.jump);return;}
+  if(jump){jumpToKpi(jump.dataset.jump,jump);return;}
   const term=e.target.closest('[data-glossary]');
-  if(term){jumpToGlossary(term.dataset.glossary);return;}
+  if(term){jumpToGlossary(term.dataset.glossary,term);return;}
   const article=e.target.closest('.kpi-card');if(!article)return;
-  if(e.target.closest('.kpi-expand'))toggleCard(article);
+  if(e.target.closest('.kpi-expand')){toggleCard(article);saveCurrentView();}
   if(e.target.closest('.calc-reset')){
    const k=kpiById[article.dataset.id];
    article.querySelectorAll('.calc-input').forEach((input,i)=>input.value=k.fields[i].value);
-   updateCardResult(article);
+   updateCardResult(article);saveCurrentView();
   }
  });
- els.grid.addEventListener('input',e=>{if(e.target.matches('.calc-input'))updateCardResult(e.target.closest('.kpi-card'))});
+ els.grid.addEventListener('input',e=>{if(e.target.matches('.calc-input')){updateCardResult(e.target.closest('.kpi-card'));saveCurrentView()}});
  document.addEventListener('click',e=>{
   const term=e.target.closest('[data-glossary]');
-  if(term&&!els.grid.contains(term)){e.preventDefault();jumpToGlossary(term.dataset.glossary);return;}
+  if(term&&!els.grid.contains(term)){
+   e.preventDefault();jumpToGlossary(term.dataset.glossary,term);return;
+  }
   const j=e.target.closest('[data-jump], [data-open-kpi]');
-  if(j&&!els.grid.contains(j)){e.preventDefault();jumpToKpi(j.dataset.jump||j.dataset.openKpi);}
+  if(j&&!els.grid.contains(j)){
+   e.preventDefault();jumpToKpi(j.dataset.jump||j.dataset.openKpi,j);return;
+  }
+  // Auch reine Sprunglinks (z. B. zu einem Rechner oder Abschnitt) sind umkehrbar.
+  const a=e.target.closest('a[href^="#"]');
+  if(a&&!a.matches('[data-filter],[data-glossary],[data-open-kpi],[data-jump]')){
+   e.preventDefault();navigateWithinAtlas(a.getAttribute('href'),a);
+  }
  });
  ['coverage-pipeline','coverage-target'].forEach(id=>$('#'+id).addEventListener('input',()=>{coverage();renderRequiredCoverage()}));
  $('#required-coverage-form').addEventListener('input',renderRequiredCoverage);
@@ -404,7 +555,8 @@ function init(){
    $('#required-coverage-form').querySelector('input[value="split"][name="required-method"]').checked=true;
    renderRequiredCoverage();
  });
- $('#glossary-search').addEventListener('input',renderGlossary);
+ $('#glossary-search').addEventListener('input',()=>{renderGlossary();saveCurrentView()});
+ $('#glossary-grid').addEventListener('toggle',()=>saveCurrentView(),true);
  $('#coverage-lab-form').addEventListener('input',renderCoverageStress);
  $('#coverage-lab-form').addEventListener('submit',e=>e.preventDefault());
  $('#stress-reset').addEventListener('click',()=>{for(const [key,id] of Object.entries(stressFields))$('#'+id).value=stressDefaults[key];renderCoverageStress()});
@@ -432,16 +584,18 @@ function init(){
   }
   if(e.key==='Escape'&&document.activeElement===els.search){els.search.blur()}
  });
- window.addEventListener('hashchange',handleHashNavigation);
- handleHashNavigation();
-}
-function handleHashNavigation(){
- let anchor;
- try{anchor=decodeURIComponent(location.hash.replace(/^#/,''))}catch{return;}
- if(anchor.startsWith('kpi-')&&kpiById[anchor.slice(4)]){
-  jumpToKpi(anchor.slice(4));
- }else if(anchor.startsWith('begriff-')&&glossaryById[anchor.slice(8)]){
-  jumpToGlossary(anchor.slice(8));
- }
+ $('#jump-return-button').addEventListener('click',goBackToSource);
+ window.addEventListener('popstate',restoreFromHistory);
+ window.addEventListener('hashchange',()=>{
+  // Popstate verarbeitet Browser-Zurück bereits; Hashchange nicht doppelt ausführen.
+  if(handledHash!==location.hash){handledHash=location.hash;renderHashView(location.hash);}
+ });
+ renderHashView(location.hash);
+ // Direkte Links sind der Anfang einer Sitzung und besitzen keinen erfundenen Rücksprung.
+ history.replaceState({
+  ...(history.state||{}),
+  atlasView:{depth:0,snapshot:captureView()}
+ },'',location.href);
+ updateBackButton();
 }
 init();

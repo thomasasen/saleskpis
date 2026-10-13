@@ -49,14 +49,13 @@ test('Offizielles Material-Icon-Sprite lokal integriert statt externen Google-Fo
 });
 
 test('Lesbare rem-Typografie: keine festen Texte unter 14px mehr',()=>{
- const fixedSizes=[...css.matchAll(/font-size\\s*:\\s*(\\d+(?:\\.\\d+)?)px/g)];
+ const fixedSizes=[...css.matchAll(/font-size\s*:\s*([0-9.]+)px/g)];
  const tiny=fixedSizes.filter(m=>Number(m[1])<14);
  assert.equal(tiny.length,0,'Unlesbare feste Schriftgrößen: '+tiny.map(m=>m[0]).join(', '));
  for(const token of ['--font-caption:.8125rem','--font-small:.875rem','--font-support:.9375rem','--font-body:1rem']){
   assert.ok(css.includes(token),'Fehlende Typografiestufe: '+token);
  }
- assert.match(css,/html\\{font-size:100%;/);
- assert.match(css,/\\.guidance-indicator p/);
- assert.match(css,/\\.calc-fields input/);
- assert.match(css,/@media\\(max-width:350px\\)/);
+ for(const fragment of ['html{font-size:100%','.guidance-indicator p','.calc-fields input','@media(max-width:350px)']){
+  assert.ok(css.includes(fragment),'Typografie-Regel fehlt: '+fragment);
+ }
 });

@@ -56,7 +56,7 @@ function getVisible(){
  return kpis.filter(k=>{
    const belongs=state.category==='all'||(state.category==='featured'?featured.includes(k.id):k.category===state.category);
    if(!query)return belongs;
-   // Mit aktiver Suche in allen 66 Einträgen suchen, damit keine Kennzahl versehentlich verborgen bleibt.
+   // Mit aktiver Suche in allen KPI-Einträgen suchen, damit keine Kennzahl versehentlich verborgen bleibt.
    return (k.title+' '+k.description+' '+k.formula+' '+k.benchmark+' '+k.category+' '+k.related.join(' ')).toLocaleLowerCase('de-DE').includes(query);
  }).filter(k=>query||state.category==='all'||state.category==='featured'||k.category===state.category);
 }
@@ -176,7 +176,7 @@ function updateCardResult(article){
  const result=evaluate(k,raw);
  article.querySelector('output').textContent=formatValue(result,k.unit);
  const error=article.querySelector('.calc-error');
- if(result===null)error.textContent='Bitte gültige Zahlen eingeben. Negative Werte sind nur bei der Rule of 40 erlaubt; Nenner und erforderliche Prozentwerte müssen größer als 0 sein.';
+ if(result===null)error.textContent='Bitte gültige Zahlen eingeben. Negative Werte sind nur bei der Rule of 40 erlaubt. Prozentangaben müssen gültig sein; Verluste dürfen die ursprüngliche Kohorte nicht überschreiten.';
  else if(k.id==='grr'&&(result>100||result<0))error.textContent='Plausibilitätswarnung: GRR muss zwischen 0 und 100 % liegen. Churn-/Contraction-Werte prüfen.';
  else if(k.id==='nrr'&&result<0)error.textContent='Plausibilitätswarnung: Negativer Kohortenumsatz ist nicht sinnvoll. Eingaben prüfen.';
  else error.textContent='';
@@ -217,7 +217,7 @@ function coverage(){
  bar.style.width=Math.min(100,c/5*100)+'%';
  const required=p>0?t/p*100:null;
  out.textContent=p===0?'Ohne offene Pipeline ist das Restziel mit den erfassten Deals nicht erreichbar.':
-  'Du brauchst rechnerisch mindestens '+nf(required,1)+' % wertgewichtete Abschlussquote für das verbleibende Ziel.';
+  'Um das Restziel zu erreichen, müssten '+nf(required,1)+' % des offenen Pipelinewerts innerhalb der Periode als Gewinn realisiert werden. Das ist nicht dieselbe Kennzahl wie die historische Win Rate.';
 }
 
 

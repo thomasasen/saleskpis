@@ -7,6 +7,7 @@
 ## Funktionen
 
 - Interaktives Beispiel für Pipeline Coverage mit frei änderbaren Werten.
+- **Sichtbarer Rechner direkt unter der Pipeline Coverage: „Welche Coverage brauchen wir?“** Wahlweise aus wertgewichteter Win Rate plus Fristquote oder unmittelbar aus dem historischen In-Period Pipeline Yield. Zeigt benötigten Faktor, erforderliche Pipeline und zusätzlichen Pipelinebedarf, immer auf Basis des dort angegebenen Restziels und der vorhandenen offenen Pipeline.
 - Rückwärtsplanung von Restziel über wertgewichtete Abschlussquote zum benötigten Pipelinewert und zur Opportunity-Anzahl.
 - 67 durchsuchbare KPI-Karten mit eigenen Rechnern und Querverweisen.
 - Grafische Wirkungskette Akquise → Pipeline → Abschluss → Wachstum.
@@ -27,6 +28,28 @@ Die App wird direkt aus statischen Dateien bereitgestellt. Einmalig nach Merge a
 4. Speichern. Die Seitenadresse lautet danach bei erfolgreicher Aktivierung: https://thomasasen.github.io/saleskpis/
 
 **Hinweis:** Nur Dateien ins Repository zu schreiben aktiviert Pages noch nicht. Der Repository-Administrator muss diese Pages-Einstellung einmalig vornehmen.
+
+
+
+## Welche Pipeline Coverage ist erforderlich?
+
+**1. Vorhandene Coverage:** \`Offene qualifizierte Pipeline / Restziel\`.
+
+**2. Benötigte Coverage mit zwei Quoten:**
+\`10000 / (wertgewichtete Win Rate in % × Fristquote der Gewinne in %)\`.
+Die Fristquote ist die **bedingte** Quote: welcher Anteil der gewonnenen Werte wird bis zum Ende der betrachteten Periode gewonnen?
+
+**3. Alternative mit realen CRM-Stichtagsdaten:**
+\`100 / In-Period Pipeline Yield in %\`.
+Dabei gilt \`Yield = in der Periode gewonnener Wert aus der eingefrorenen Startpipeline / ursprüngliche Startpipeline × 100\`.
+
+**4. Benötigte Pipeline:** \`Restziel × benötigte Coverage\`.
+
+**5. Zusätzlich benötigte Pipeline:** \`MAX(0, benötigte Pipeline − vorhandene qualifizierte Pipeline)\`.
+
+**Beispiel:** Offene Pipeline 450.000 €, Restziel 150.000 €, wertgewichtete Win Rate 30 %, von den gewonnenen Werten kommen 80 % bis zum Periodenende: 3,00× vorhandene Coverage, 4,17× benötigte Coverage, 625.000 € benötigte offene Pipeline und 175.000 € zusätzliche Pipeline.
+
+**Grenze:** Dieser Faktor ist ein vereinfachter Erwartungswert, kein garantierter Mindestbestand. Vor allem unterschiedliche Dealgrößen, Segmente und Verkaufsphasen können die Übertragbarkeit historischer Win Rates beeinträchtigen. Die reine mittlere Sales-Cycle-Dauer darf nicht mechanisch in eine Fristquote umgerechnet werden. Nach Möglichkeit kalibrierten In-Period Yield aus vergleichbaren Pipeline-Snapshots verwenden.
 
 ## Lokale Entwicklung
 

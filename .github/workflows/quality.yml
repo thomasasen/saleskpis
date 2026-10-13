@@ -1,7 +1,7 @@
 name: Quality checks
 on:
   push:
-    branches: [main, "feat/**"]
+    branches: [main, "feat/**", "audit/**"]
   pull_request:
     branches: [main]
 permissions:
@@ -19,6 +19,10 @@ jobs:
         run: |
           node --check kpis.js
           node --check app.js
+          node --check coverage-model.js
+          node --check glossary.js
+          node --check dependencies.js
+          node --check tests/browser-smoke.mjs
       - name: Test KPI formulas and references
         run: node --test tests/*.test.mjs
       - name: Check required static assets
@@ -27,3 +31,22 @@ jobs:
           test -f styles.css
           test -f favicon.svg
           test -f .nojekyll
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install browser test dependency (not shipped to GitHub Pages)
+        run: npm install --no-save --ignore-scripts playwright@1.55.1
+      - name: Install Chromium for Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Start local website
+        run: |
+          python3 -m http.server 8765 --bind 127.0.0.1 >/tmp/saleskpi-web.log 2>&1 &
+          sleep 2
+      - name: Exercise calculators, navigation and mobile viewports
+        run: node tests/browser-smoke.mjs

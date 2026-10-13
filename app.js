@@ -420,10 +420,13 @@ function init(){
   }
   if(e.key==='Escape'&&document.activeElement===els.search){els.search.blur()}
  });
+ window.addEventListener('hashchange',handleHashNavigation);
+ handleHashNavigation();
+}
+function handleHashNavigation(){
  const anchor=decodeURIComponent(location.hash.replace(/^#/,''));
  if(anchor.startsWith('kpi-')&&kpiById[anchor.slice(4)]){
-  const id=anchor.slice(4);
-  jumpToKpi(id);
+  jumpToKpi(anchor.slice(4));
  }else if(anchor.startsWith('begriff-')&&glossaryById[anchor.slice(8)]){
   jumpToGlossary(anchor.slice(8));
  }

@@ -360,5 +360,14 @@ export const glossary = [
     "warning": "Kohorten und Zeiträume müssen identisch abgegrenzt werden.",
     "kpi": "sql-opportunity"
   }
+,{
+  "id": "in-period-yield",
+  "title": "In-Period Pipeline Yield",
+  "translation": "Periodenbezogene Pipeline-Realisierungsquote",
+  "definition": "Welcher Anteil der zu Periodenbeginn dokumentierten offenen Pipeline bis zum Periodenende tatsächlich gewonnen wurde. Verlorene, verspätete und offene Deals reduzieren die Quote gemeinsam.",
+  "example": "450.000 € offene Pipeline zu Quartalsbeginn, davon 108.000 € rechtzeitig gewonnen: 24 %. Das entspricht rechnerisch einer benötigten Coverage von 4,17×.",
+  "warning": "Pipeline-Zugänge im Quartal nicht zum Zähler einer eingefrorenen Startkohorte hinzufügen.",
+  "kpi": "in-period-yield"
+}
 ];
 export const glossaryById = Object.fromEntries(glossary.map(t=>[t.id,t]));

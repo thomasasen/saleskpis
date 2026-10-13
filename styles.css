@@ -303,3 +303,20 @@ body.dark .detail-block.warning .detail-label{color:#f0d3a4}
 body.dark .filter-button.active{background:#cae9a7;border-color:#cae9a7;color:#203e2e}
 .influence-core small{color:#435f51}
 .influence-core-alt small{color:#405c70}
+
+
+/* Vollständiger axe-Satz: verbleibende Kontrastprobleme im hellen Design. */
+.stress-headlines small{color:#415c4c}
+.system-node small{color:#4b6170}
+.lever>span{color:#2d6250}
+.lever p{color:#4c6070}
+.reverse-step>span{color:#2c6454}
+.view-hint{color:#4e6373}
+.filter-button span{opacity:1;color:#3e5864}
+.filter-button.active span{color:inherit}
+.kpi-card-category{color:#265f4c}
+body.dark .filter-button span{color:#d0e6dd}
+body.dark .filter-button.active span{color:#203e2e}
+body.dark .system-node small,body.dark .lever p{color:#c7dae1}
+body.dark .stress-headlines small{color:#cee7d7}
+body.dark .lever>span,body.dark .reverse-step>span{color:#bce4c9}

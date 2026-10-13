@@ -1,0 +1,12 @@
+{
+  "name": "sales-kpi-atlas",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Kostenfreie KPI-Wissensplattform für Softwarevertrieb und Consulting",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check kpis.js && node --check app.js && npm test",
+    "dev": "python3 -m http.server 8000"
+  }
+}

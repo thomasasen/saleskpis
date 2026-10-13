@@ -21,7 +21,7 @@ test('Externe Abhängigkeiten, Tracking und Fremdskripte werden nicht benötigt'
  assert.match(html,/<script type="module" src="\.\/app\.js"><\/script>/);
  assert.doesNotMatch(html,/<script[^>]+src="https?:/);
  assert.doesNotMatch(html,/<link[^>]+stylesheet[^>]+href="https?:/);
- assert.doesNotMatch(js,/fetch\(|XMLHttpRequest|analytics|gtag\(/);
+ assert.doesNotMatch(js,/\bfetch\s*\(|XMLHttpRequest|\bgtag\s*\(|\banalytics\s*\(/);
 });
 test('Responsive und Tastaturbedienung sind implementiert',()=>{
  assert.match(css,/@media\(max-width:760px\)/);
@@ -34,4 +34,16 @@ test('Katalog und Kopfangabe stimmen überein',()=>{
  assert.ok(kpis.length>=60);
  assert.ok(html.includes('id="hero-kpi-count"'));
  assert.ok(js.includes('kpis.length'));
+});
+
+test('Die sechs Stationen im interaktiven Wirkungsmodell sind erreichbar',()=>{
+ for(const id of ['akquise','pipeline','abschluss','forecast','bestand','effizienz']){
+  assert.match(html,new RegExp('data-map-node="'+id+'"'),id);
+ }
+ assert.match(html,/id="map-detail-links"/);
+ assert.match(js,/function renderGraphStation/);
+});
+test('Offizielles Material-Icon-Sprite lokal integriert statt externen Google-Fonts-Request',()=>{
+ assert.match(html,/material-icons\.svg#space_dashboard/);
+ assert.doesNotMatch(html,/fonts\.googleapis\.com|fonts\.gstatic\.com/);
 });

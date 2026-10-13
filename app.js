@@ -582,6 +582,8 @@ function initTheme(){
 function init(){
  try{history.scrollRestoration='manual'}catch{}
  $('#hero-kpi-count').textContent=kpis.length;
+ $('#hero-category-count').textContent=categories.length;
+ $('#hero-glossary-count').textContent=glossary.length;
  renderNav();renderGrid();renderSources();renderGlossary();renderGraphStation('akquise');initTheme();coverage();renderRequiredCoverage();reverse();renderCoverageStress();
  // Linkziel beim Teilen immer aus der tatsächlich geöffneten Seite ableiten.
  $('#mail-link').href='mailto:?subject='+encodeURIComponent('Sales KPI Atlas – Vertriebskennzahlen verstehen')+'&body='+encodeURIComponent('Ein praxisnahes Nachschlagewerk mit KPI-Rechnern:\n'+location.origin+location.pathname);

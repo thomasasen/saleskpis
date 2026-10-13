@@ -1,3 +1,5 @@
+import {glossary,glossaryById} from './glossary.js';
+import {diagnoseCoverage} from './coverage-model.js';
 import {categories,kpis,kpiById,sources,evaluate} from './kpis.js';
 
 const $=selector=>document.querySelector(selector);
@@ -57,6 +59,67 @@ function getVisible(){
    return (k.title+' '+k.description+' '+k.formula+' '+k.benchmark+' '+k.category+' '+k.related.join(' ')).toLocaleLowerCase('de-DE').includes(query);
  }).filter(k=>query||state.category==='all'||state.category==='featured'||k.category===state.category);
 }
+
+function termLinksForKpi(k){
+ const termRefs={
+  'pipeline-coverage':['coverage','pipeline','weighted-rate','sales-cycle','slippage'],
+  'required-coverage':['coverage','weighted-rate','win-rate'],
+  'pipeline-gap':['coverage','quota','deal-size'],
+  'weighted-pipeline':['pipeline','sales-stage','weighted-rate'],
+  'win-rate':['win-rate','loss-rate','closed-won','closed-lost'],
+  'win-rate-value':['weighted-rate','win-rate','deal-size'],
+  'avg-cycle':['sales-cycle','closed-won','opportunity'],
+  'avg-deal':['deal-size','opportunity','bookings'],
+  'sales-velocity':['sales-velocity','sales-cycle','win-rate','deal-size'],
+  'slippage':['slippage','close-date','forecast'],
+  'forecast-error':['forecast','commit','bookings'],
+  'forecast-accuracy':['forecast','commit'],
+  'quota-attainment':['quota','bookings'],
+  'grr':['grr','nrr','churn','cohort'],
+  'nrr':['nrr','grr','churn','cohort'],
+  'cac-payback':['cac','gross-margin','arr'],
+  'utilization':['utilization','billable','realization'],
+  'project-margin':['gross-margin','cogs','billable'],
+  'backlog-coverage':['backlog','pipeline'],
+  'arr':['arr','mrr','acv'],
+  'tcv':['tcv','acv','bookings'],
+  'acv':['acv','tcv','arr']
+ };
+ const exact=(termRefs[k.id]||[]).filter(id=>glossaryById[id]);
+ const haystack=(k.title+' '+k.description+' '+k.formula).toLocaleLowerCase('de-DE');
+ const matching=glossary.filter(t=>haystack.includes(t.title.toLocaleLowerCase('de-DE'))).map(t=>t.id);
+ const ids=[...new Set([...exact,...matching])].slice(0,5);
+ if(!ids.length)return '';
+ return '<div class="card-term-links"><span>BEGRIFFE EINFACH ERKLÄRT</span><div>'+
+  ids.map(id=>'<button type="button" class="term-pill" data-glossary="'+escapeHtml(id)+'">'+escapeHtml(glossaryById[id].title)+' ↗</button>').join('')+
+  '</div></div>';
+}
+function renderGlossary(){
+ const q=$('#glossary-search').value.trim().toLocaleLowerCase('de-DE');
+ const entries=glossary.filter(t=>(t.title+' '+t.translation+' '+t.definition+' '+t.example).toLocaleLowerCase('de-DE').includes(q));
+ $('#glossary-count').textContent=entries.length+' von '+glossary.length+' Begriffen';
+ $('#glossary-empty').hidden=entries.length>0;
+ $('#glossary-grid').innerHTML=entries.map(t=>
+  '<details class="glossary-item" id="begriff-'+escapeHtml(t.id)+'">'+
+  '<summary><span><strong>'+escapeHtml(t.title)+'</strong><small>'+escapeHtml(t.translation)+'</small></span><span aria-hidden="true" class="glossary-expand">+</span></summary>'+
+  '<div class="glossary-body"><p>'+escapeHtml(t.definition)+'</p>'+
+  '<p><b>Beispiel:</b> '+escapeHtml(t.example)+'</p>'+
+  '<p class="glossary-caution"><b>Typischer Fehler:</b> '+escapeHtml(t.warning)+'</p>'+
+  (kpiById[t.kpi]?'<button type="button" data-jump="'+escapeHtml(t.kpi)+'">Passende Kennzahl mit Rechner ansehen ↗</button>':'')+
+  '</div></details>'
+ ).join('');
+}
+function jumpToGlossary(id){
+ if(!glossaryById[id])return;
+ const search=$('#glossary-search');search.value='';renderGlossary();
+ const entry=document.getElementById('begriff-'+id);
+ if(!entry)return;
+ entry.open=true;
+ history.replaceState(null,'','#begriff-'+id);
+ entry.scrollIntoView({behavior:motion(),block:'start'});
+ entry.querySelector('summary').focus({preventScroll:true});
+}
+
 function cardMarkup(k){
  const inputs=k.fields.map((f,i)=>{
   const id='input-'+k.id+'-'+i;
@@ -71,7 +134,7 @@ function cardMarkup(k){
   '<p class="kpi-benchmark"><span>EINORDNUNG</span> · '+escapeHtml(k.benchmark)+'</p>'+
   '<button type="button" class="kpi-expand" aria-expanded="false" aria-controls="detail-'+escapeHtml(k.id)+'">Formel, Beispiel & Rechner anzeigen <span class="expand-symbol" aria-hidden="true">+</span></button></div>'+
   '<div id="detail-'+escapeHtml(k.id)+'" class="kpi-detail" hidden>'+
-  '<span class="detail-label">Die Formel</span><div class="formula-box">'+escapeHtml(k.formula)+'</div>'+
+  termLinksForKpi(k)+'<span class="detail-label">Die Formel</span><div class="formula-box">'+escapeHtml(k.formula)+'</div>'+
   '<span class="detail-label">Beispielrechnung</span><p class="sample-line">'+escapeHtml(k.example)+'</p>'+
   '<section class="calc-wrap" aria-label="KPI-Rechner '+escapeHtml(k.title)+'"><div class="calc-title"><strong>Mit eigenen Zahlen rechnen</strong><button class="calc-reset" type="button">Beispielwerte ↺</button></div>'+
   '<div class="calc-fields">'+inputs+'</div><div class="calc-result"><span>BERECHNETER WERT</span><output aria-live="polite">'+escapeHtml(formatValue(evaluate(k,k.fields.map(f=>f.value)),k.unit))+'</output></div>'+
@@ -142,6 +205,54 @@ function coverage(){
  out.textContent=p===0?'Ohne offene Pipeline ist das Restziel mit den erfassten Deals nicht erreichbar.':
   'Du brauchst rechnerisch mindestens '+nf(required,1)+' % wertgewichtete Abschlussquote für das verbleibende Ziel.';
 }
+
+const stressDefaults={
+ pipeline:450000,goal:150000,winRate:30,onTimeRate:80,
+ averageDeal:75000,largestDeal:175000,averageCycle:120,daysLeft:60
+};
+const stressFields={
+ pipeline:'stress-pipeline',goal:'stress-goal',winRate:'stress-win',onTimeRate:'stress-ontime',
+ averageDeal:'stress-deal',largestDeal:'stress-largest',averageCycle:'stress-cycle',daysLeft:'stress-days'
+};
+function renderCoverageStress(){
+ const values={};
+ for(const [key,id] of Object.entries(stressFields)){
+  const input=$('#'+id);
+  values[key]=input.value.trim()===''?NaN:Number(input.value);
+ }
+ const model=diagnoseCoverage(values);
+ const outputs={
+  'stress-coverage':model?formatValue(model.ratio,'×'):'—',
+  'stress-required':model?formatValue(model.requiredCoverage,'×'):'—',
+  'stress-expected':model?formatValue(model.expected,'€'):'—',
+  'stress-gap':model?formatValue(model.remainingGap,'€'):'—',
+  'stress-pipeline-gap':model?formatValue(model.missingPipeline,'€'):'—',
+  'stress-extra-deals':model&&model.additionalDeals!==null?nf0(model.additionalDeals):'—'
+ };
+ for(const [id,value] of Object.entries(outputs))$('#'+id).textContent=value;
+ const interpretation=$('#stress-interpretation'),warnings=$('#stress-warnings');
+ if(!model){
+   interpretation.textContent='Eingaben prüfen: Win Rate und fristgerechter Anteil müssen zwischen 0 % und 100 % liegen. Der größte Deal darf den Pipelinewert nicht überschreiten; Dealgröße und Sales Cycle müssen positiv sein.';
+   warnings.replaceChildren();return;
+ }
+ if(model.goalReached){
+  interpretation.textContent='Das Restziel beträgt 0 €. Eine Pipeline Coverage ist in diesem Fall nicht sinnvoll interpretierbar.';
+ }else if(model.missingPipeline===null){
+  interpretation.textContent='Mit der aktuellen angenommenen Gewinn- und Fristgerechtigkeitsquote gibt es keinen endlichen Pipeline-Zielwert. Prüfe die Annahmen.';
+ }else{
+  interpretation.textContent='Von '+nf0(values.pipeline)+' € offener Pipeline werden im vereinfachten Modell '+nf0(model.expected)+' € rechtzeitig gewonnen. '+
+  (model.remainingGap>0?'Für das Restziel fehlen '+nf0(model.remainingGap)+' € erwarteter Gewinnwert. ':'Das Restziel wird rechnerisch gedeckt. ')+
+  'Dafür werden bei den eingestellten Quoten '+nf(model.requiredCoverage,2)+'× Pipeline Coverage benötigt.';
+ }
+ const messages=[
+  'Die Verlustquote allein sagt nichts darüber aus, wann Deals gewonnen oder verloren werden. Verschiebungen bleiben offene Deals.',
+  'Die Pipeline umfasst rechnerisch ungefähr '+nf(model.estimatedOpenDeals,1)+' durchschnittlich große Opportunities. Die tatsächliche Dealzahl und Verteilung können abweichen.',
+  ...(model.shareLargest!==null?['Größter Deal: '+nf(model.shareLargest,1)+' % der Pipeline. Ohne ihn sinkt der modellierte fristgerechte Wert auf '+nf0(model.expectedWithoutLargest)+' €.']:[]),
+  ...model.warnings
+ ];
+ warnings.replaceChildren(...messages.map(msg=>{const p=document.createElement('p');p.textContent=msg;return p;}));
+}
+
 function reverse(){
  const target=Number($('#reverse-target').value),win=Number($('#reverse-win').value),deal=Number($('#reverse-deal').value);
  const valid=Number.isFinite(target)&&target>=0&&win>0&&win<=100&&deal>0;
@@ -162,7 +273,7 @@ function initTheme(){
 }
 function init(){
  $('#hero-kpi-count').textContent=kpis.length;
- renderNav();renderGrid();renderSources();initTheme();coverage();reverse();
+ renderNav();renderGrid();renderSources();renderGlossary();initTheme();coverage();reverse();renderCoverageStress();
  // Linkziel beim Teilen immer aus der tatsächlich geöffneten Seite ableiten.
  $('#mail-link').href='mailto:?subject='+encodeURIComponent('Sales KPI Atlas – Vertriebskennzahlen verstehen')+'&body='+encodeURIComponent('Ein praxisnahes Nachschlagewerk mit KPI-Rechnern:\n'+location.origin+location.pathname);
  els.filters.addEventListener('click',e=>{const b=e.target.closest('[data-filter]');if(b)selectFilter(b.dataset.filter,false)});
@@ -173,6 +284,8 @@ function init(){
  els.grid.addEventListener('click',e=>{
   const jump=e.target.closest('[data-jump]');
   if(jump){jumpToKpi(jump.dataset.jump);return;}
+  const term=e.target.closest('[data-glossary]');
+  if(term){jumpToGlossary(term.dataset.glossary);return;}
   const article=e.target.closest('.kpi-card');if(!article)return;
   if(e.target.closest('.kpi-expand'))toggleCard(article);
   if(e.target.closest('.calc-reset')){
@@ -183,10 +296,16 @@ function init(){
  });
  els.grid.addEventListener('input',e=>{if(e.target.matches('.calc-input'))updateCardResult(e.target.closest('.kpi-card'))});
  document.addEventListener('click',e=>{
+  const term=e.target.closest('[data-glossary]');
+  if(term&&!els.grid.contains(term)){e.preventDefault();jumpToGlossary(term.dataset.glossary);return;}
   const j=e.target.closest('[data-jump], [data-open-kpi]');
   if(j&&!els.grid.contains(j)){e.preventDefault();jumpToKpi(j.dataset.jump||j.dataset.openKpi);}
  });
  ['coverage-pipeline','coverage-target'].forEach(id=>$('#'+id).addEventListener('input',coverage));
+ $('#glossary-search').addEventListener('input',renderGlossary);
+ $('#coverage-lab-form').addEventListener('input',renderCoverageStress);
+ $('#coverage-lab-form').addEventListener('submit',e=>e.preventDefault());
+ $('#stress-reset').addEventListener('click',()=>{for(const [key,id] of Object.entries(stressFields))$('#'+id).value=stressDefaults[key];renderCoverageStress()});
  $('#reverse-form').addEventListener('input',reverse);
  $('#reverse-form').addEventListener('submit',e=>e.preventDefault());
  $('#theme-toggle').addEventListener('click',()=>{
@@ -215,6 +334,8 @@ function init(){
  if(anchor.startsWith('kpi-')&&kpiById[anchor.slice(4)]){
   const id=anchor.slice(4);
   jumpToKpi(id);
+ }else if(anchor.startsWith('begriff-')&&glossaryById[anchor.slice(8)]){
+  jumpToGlossary(anchor.slice(8));
  }
 }
 init();
